@@ -20,6 +20,14 @@ class mat3d:
         self.content = content
 
     def calc_transpose(self) -> 'mat3d':
+        """
+        This function calculates transpose of the caller mat3d object
+
+        Returns:
+
+        Transposed version of new mat3d object
+        """
+
         value = []
 
         for i in range(4):
