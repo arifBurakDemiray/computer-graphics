@@ -28,8 +28,20 @@ class mat3d:
 
         return mat3d(value)
 
-    #make it from inverse because of openGl
     def calc_multiplacation(self,matrix: 'mat3d') -> 'mat3d':
+        """
+        Calculates multiplacation of two 4x4 matrices, 
+        it start multiplacation with parameter mat3d attribute
+
+        Parameters:
+
+        A mat3d object
+
+        Returns:
+
+        A new mat3d object that multiplied with caller mat3d object
+
+        """
         value = []
 
         for z in range(4):
