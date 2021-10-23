@@ -60,3 +60,35 @@ class mat3d:
                 value.append(total)
 
         return mat3d(value)
+    
+    def calc_scale(self, constant: float) -> 'mat3d':
+        """
+        This function calculates scaled version of caller mat3d object by given constant
+
+        Parameters:
+        
+        Constant value for scaling
+
+        Returns:
+
+        Scaled new mat3d object of scaled caller mat3d object
+        """
+        return self.calc_multiplacation(self.__create_scale_matrix(constant))
+
+    def __create_scale_matrix(constant: float) -> 'mat3d':
+        """
+        This function creates scale matrix for given constant
+
+        Parameters:
+
+        Constant value for the scale matrix
+
+        Returns:
+
+        Scale matrix for constant value
+        """
+        return mat3d(
+            [1/constant,0,0,0,
+            0,1/constant,0,0,
+            0,0,1/constant,0,
+            0,0,0,1])
