@@ -36,10 +36,7 @@ class vec3d:
         return vec3d(self.x+vector.x,self.y+vector.y+self.z+vector.z,self.__check_homo_index(vector))
 
     def multiply(self,constant: float) -> 'vec3d':
-        self.x = self.x*constant
-        self.y = self.y*constant
-        self.z = self.z*constant
-        return self
+        return vec3d(self.x*constant,self.y*constant,self.z*constant,self.w)
 
     def subtract(self,vector: 'vec3d') -> 'vec3d':
         return vec3d(self.x-vector.x,self.y-vector.y,self.z-vector.z,self.__check_homo_index(vector))
@@ -53,9 +50,18 @@ class vec3d:
         )
 
     def calc_projection(self, vector: 'vec3d') -> 'vec3d':
-        return vector.multiply(
-            (self.calc_length()/vector.calc_length())*
-            np.cos(self.calc_angle_between(vector)))
+
+        degree = self.calc_angle_between(vector)
+
+        constant = (self.calc_length()/vector.calc_length())*np.cos(np.deg2rad(degree))
+
+        return vector.multiply(constant)
+
+    def calc_triple_cross(self,vector1: 'vec3d',vector2: 'vec3d') -> 'vec3d':
+        return vector1.multiply(self.calc_dot(vector2)).subtract(vector2.multiply(self.calc_dot(vector1)))
+
+    def calc_triple_scalar(self,vector1: 'vec3d',vector2: 'vec3d') -> float:
+        return self.calc_dot(vector1.calc_cross(vector2))
 
     def __check_homo_index(self,vector: 'vec3d') -> int:
         return 1 if (self.w==1 & vector.w==1) else 0
