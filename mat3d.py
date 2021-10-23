@@ -27,3 +27,16 @@ class mat3d:
                 value.append(self.content[y*4 + i])
 
         return mat3d(value)
+
+    #make it from inverse because of openGl
+    def calc_multiplacation(self,matrix: 'mat3d') -> 'mat3d':
+        value = []
+
+        for z in range(4):
+            for i in range(4):
+                total = 0
+                for y in range(4):
+                    total += matrix.content[z*4+y]*self.content[y*4 + i]
+                value.append(total)
+
+        return mat3d(value)
