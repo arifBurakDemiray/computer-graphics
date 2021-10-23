@@ -3,6 +3,8 @@
 # StudentId: 250201022
 # October 2021
 
+from vec3d import vec3d 
+
 class mat3d:
     """
     This class holds a 4x4 matrix
@@ -74,6 +76,40 @@ class mat3d:
         Scaled new mat3d object of scaled caller mat3d object
         """
         return self.calc_multiplacation(self.__create_scale_matrix(constant))
+
+    def calc_translation(self, vector: vec3d) -> 'mat3d':
+        """
+        This function calculates translation of mat3d matrix by given vec3d vector
+
+        Parameters:
+
+        A vector instance that's type is vec3d
+
+        Returns:
+
+        new mat3d object that is translated by given vector
+        """
+        return self.calc_multiplacation(self.__create_translation_matrix(vector))
+
+    
+    def __create_translation_matrix(vector: vec3d) -> 'mat3d':
+        """
+        This function creates translation matrix by given vec3d object
+
+        Parameters:
+
+        Translation vector
+
+        Returns:
+
+        Translation matrix
+        """
+        return mat3d([
+            1,0,0,vector.x,
+            0,1,0,vector.y,
+            0,0,1,vector.z,
+            0,0,0,1
+        ])
 
     def __create_scale_matrix(constant: float) -> 'mat3d':
         """
