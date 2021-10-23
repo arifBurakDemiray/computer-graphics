@@ -4,6 +4,8 @@
 # October 2021
 
 from vec3d import vec3d 
+import numpy as np
+from helper import degree_to_radian,radian_to_degree
 
 class mat3d:
     """
@@ -92,6 +94,114 @@ class mat3d:
         return self.calc_multiplacation(self.__create_translation_matrix(vector))
 
     
+    def calc_rotation_x(self, degree: float) -> 'mat3d':
+        """
+        This function calculates rotated by x axis of given caller mat3d matrix
+
+        Parameters:
+
+        Degree of rotation
+
+        Returns:
+
+        Rotated matrix by x axis
+        """
+        return self.calc_multiplacation(self.__create_rotation_matrix_x(degree))
+
+    def calc_rotation_y(self, degree: float) -> 'mat3d':
+        """
+        This function calculates rotated by y axis of given caller mat3d matrix
+
+        Parameters:
+
+        Degree of rotation
+
+        Returns:
+
+        Rotated matrix by y axis
+        """
+        return self.calc_multiplacation(self.__create_rotation_matrix_y(degree))
+
+    def calc_rotation_z(self, degree: float) -> 'mat3d':
+        """
+        This function calculates rotated by z axis of given caller mat3d matrix
+
+        Parameters:
+
+        Degree of rotation
+
+        Returns:
+
+        Rotated matrix by z axis
+        """
+        return self.calc_multiplacation(self.__create_rotation_matrix_z(degree))
+
+    def __create_rotation_matrix_z(degree: float) -> 'mat3d':
+        """
+        This function creates rotation matrix for z axis
+
+        Parameters:
+
+        Degree of rotation
+
+        Returns:
+
+        Rotation matrix of x axis
+        """
+        rad = degree_to_radian(degree)
+
+        return mat3d([
+            np.cos(rad),-np.sin(rad),0,0,
+            np.sin(rad),np.cos(rad),0,0,
+            0,0,1,0,
+            0,0,0,1
+        ])
+
+
+    def __create_rotation_matrix_y(degree: float) -> 'mat3d':
+        """
+        This function creates rotation matrix for y axis
+
+        Parameters:
+
+        Degree of rotation
+
+        Returns:
+
+        Rotation matrix of y axis
+        """
+        rad = degree_to_radian(degree)
+
+        return mat3d([
+            np.cos(rad),0,np.sin(rad),0,
+            0,1,0,0,
+            -np.sin(rad),0,np.cos(rad),0,
+            0,0,0,1
+        ])
+
+    def __create_rotation_matrix_x(degree: float) -> 'mat3d':
+        """
+        This function creates rotation matrix for x axis
+
+        Parameters:
+
+        Degree of rotation
+
+        Returns:
+
+        Rotation matrix of x axis
+        """
+        rad = degree_to_radian(degree)
+
+        return mat3d([
+            1,0,0,0,
+            0,np.cos(rad),-np.sin(rad),0,
+            0,np.sin(rad),np.cos(rad),0,
+            0,0,0,1
+        ])
+
+    
+
     def __create_translation_matrix(vector: vec3d) -> 'mat3d':
         """
         This function creates translation matrix by given vec3d object
@@ -124,7 +234,7 @@ class mat3d:
         Scale matrix for constant value
         """
         return mat3d(
-            [1/constant,0,0,0,
-            0,1/constant,0,0,
-            0,0,1/constant,0,
+            [constant,0,0,0,
+            0,constant,0,0,
+            0,0,constant,0,
             0,0,0,1])

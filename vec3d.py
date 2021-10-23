@@ -4,6 +4,7 @@
 # October 2021
 
 import numpy as np
+from helper import degree_to_radian,radian_to_degree
 
 class vec3d:
     """
@@ -71,7 +72,7 @@ class vec3d:
         
         value = self.__check_value(self.calc_dot(vector)/(self.calc_length()*vector.calc_length()))
 
-        return np.arccos(value)*(180/np.pi)
+        return radian_to_degree(np.arccos(value))
 
     def calc_length(self) -> float:
         """
@@ -167,7 +168,7 @@ class vec3d:
         """
         degree = self.calc_angle_between(vector)
 
-        constant = (self.calc_length()/vector.calc_length())*np.cos(np.deg2rad(degree))
+        constant = (self.calc_length()/vector.calc_length())*np.cos(degree_to_radian(degree))
 
         return vector.multiply(constant)
 
