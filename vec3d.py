@@ -20,19 +20,19 @@ class vec3d:
     def calc_multi(self) -> float:
         return self.x*self.y*self.z*self.w
 
-    def dot(self,vector: 'vec3d') -> float:
+    def calc_dot(self,vector: 'vec3d') -> float:
         return (self.x*vector.x) + (self.y*vector.y) + (self.z*vector.z)
 
-    def angle_between(self,vector: 'vec3d') -> int:
+    def calc_angle_between(self,vector: 'vec3d') -> float:
         
-        value = self.__check_value(self.dot(vector)/(self.length()*vector.length()))
+        value = self.__check_value(self.calc_dot(vector)/(self.calc_length()*vector.calc_length()))
 
         return np.arccos(value)*(180/np.pi)
 
-    def length(self):
-        return np.sqrt(self.dot(self))
+    def calc_length(self):
+        return np.sqrt(self.calc_dot(self))
 
-    def addition(self,vector: 'vec3d') -> 'vec3d':
+    def add(self,vector: 'vec3d') -> 'vec3d':
         return vec3d(self.x+vector.x,self.y+vector.y+self.z+vector.z,self.__check_homo_index(vector))
 
     def multiply(self,constant: float) -> 'vec3d':
@@ -41,7 +41,10 @@ class vec3d:
         self.z = self.z*constant
         return self
 
-    def cross(self,vector: 'vec3d') -> 'vec3d':
+    def subtract(self,vector: 'vec3d') -> 'vec3d':
+        return vec3d(self.x-vector.x,self.y-vector.y,self.z-vector.z,self.__check_homo_index(vector))
+
+    def calc_cross(self,vector: 'vec3d') -> 'vec3d':
         return vec3d(
             self.y*vector.z - self.z*vector.y,
             self.z*vector.x - self.x*vector.z,
@@ -49,12 +52,12 @@ class vec3d:
             self.__check_homo_index(vector)   
         )
 
-    def projection(self, vector: 'vec3d') -> 'vec3d':
+    def calc_projection(self, vector: 'vec3d') -> 'vec3d':
         return vector.multiply(
-            (self.length()/vector.length())*
-            np.cos(self.angle_between(vector)))
+            (self.calc_length()/vector.calc_length())*
+            np.cos(self.calc_angle_between(vector)))
 
-    def __check_homo_index(self,vector: 'vec3d')->int:
+    def __check_homo_index(self,vector: 'vec3d') -> int:
         return 1 if (self.w==1 & vector.w==1) else 0
 
     def __check_value(self,val):
