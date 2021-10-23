@@ -35,6 +35,12 @@ class vec3d:
     def addition(self,vector: 'vec3d') -> 'vec3d':
         return vec3d(self.x+vector.x,self.y+vector.y+self.z+vector.z,self.__check_homo_index(vector))
 
+    def multiply(self,constant: float) -> 'vec3d':
+        self.x = self.x*constant
+        self.y = self.y*constant
+        self.z = self.z*constant
+        return self
+
     def cross(self,vector: 'vec3d') -> 'vec3d':
         return vec3d(
             self.y*vector.z - self.z*vector.y,
@@ -43,8 +49,10 @@ class vec3d:
             self.__check_homo_index(vector)   
         )
 
-    def projection(self, vector: 'vec3d') -> vec3d:
-        return 
+    def projection(self, vector: 'vec3d') -> 'vec3d':
+        return vector.multiply(
+            (self.length()/vector.length())*
+            np.cos(self.angle_between(vector)))
 
     def __check_homo_index(self,vector: 'vec3d')->int:
         return 1 if (self.w==1 & vector.w==1) else 0
