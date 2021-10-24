@@ -8,21 +8,46 @@ from vec3d import vec3d
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+from polygon_helper import vectors_to_matrices
 import sys
 
 class Polygon:
-    vertices = [vec3d]
+    vertices = mat3d
     matrix_stack = [mat3d]
 
     def __init__(self,vertices: list[vec3d]) -> 'Polygon':
-        self.vertices = vertices
+        self.vertices = vectors_to_matrices(vertices)
 
-    def transformate(self, matrix: mat3d) -> 'Polygon':
+    def transformate(self, matrix: mat3d) -> None:
         self.matrix_stack.append(matrix)
-        return self
+        self.vertices = self.vertices.calc_multiplacation(matrix)
+    
 
-x = vec3d(1,5,8,1)
+    def vertices_to_vectors(self) -> list[vec3d]:
+        
+        result = [vec3d]
+        
+        for i in range(int(len(self.vertices.content)/4) - 1):
+            result.append(
+                vec3d(i*4,i*4+1,i*4+2,0)
+            )
+        
+        return result
 
+triangle_vertices = [
+    vec3d(0.0,1.0,0.0,0.0),
+    vec3d(-1.0,-1.0,1.0,0.0),
+    vec3d(1.0,-1.0,1.0,0.0),
+    vec3d(1.0,-1.0,-1.0,0.0),
+    vec3d(-1.0,-1.0,-1.0,0.0)
+]
+
+triangle = Polygon(triangle_vertices)
+
+def update_vertices(triangle_vertices):
+    print("%s - %s - %s" % (triangle_vertices[0].x,triangle_vertices[0].y,triangle_vertices[0].z))
+    triangle_vertices = triangle.vertices_to_vectors()
+    print("%s - %s - %s" % (triangle_vertices[0].x,triangle_vertices[0].y,triangle_vertices[0].z))
 window = 0
 
 rtri = 0.0
@@ -53,105 +78,38 @@ def ReSizeGLScene(Width, Height):
 	glMatrixMode(GL_MODELVIEW)
 
 def DrawGLScene():
-	global rtri, rquad
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	# Clear The Screen And The Depth Buffer
-	glLoadIdentity();				# Reset The View
-	glTranslatef(-1.5,0.0,-6.0);	# Move Left And Into The Screen
-
-	glRotatef(rtri,0.0,1.0,0.0);	# Rotate The Pyramid On It's Y Axis
-
-	glBegin(GL_TRIANGLES);			# Start Drawing The Pyramid
-
-	glColor3f(1.0,0.0,0.0);			# Red
-	glVertex3f( 0.0, 1.0, 0.0);		# Top Of Triangle (Front)
-	glColor3f(0.0,1.0,0.0);			# Green
-	glVertex3f(-1.0,-1.0, 1.0);		# Left Of Triangle (Front)
-	glColor3f(0.0,0.0,1.0);			# Blue
-	glVertex3f( 1.0,-1.0, 1.0);
-
-	glColor3f(1.0,0.0,0.0);			# Red
-	glVertex3f( 0.0, 1.0, 0.0);		# Top Of Triangle (Right)
-	glColor3f(0.0,0.0,1.0);			# Blue
-	glVertex3f( 1.0,-1.0, 1.0);		# Left Of Triangle (Right)
-	glColor3f(0.0,1.0,0.0);			# Green
-	glVertex3f( 1.0,-1.0, -1.0);	# Right
-
-	glColor3f(1.0,0.0,0.0);			# Red
-	glVertex3f( 0.0, 1.0, 0.0);		# Top Of Triangle (Back)
-	glColor3f(0.0,1.0,0.0);			# Green
-	glVertex3f( 1.0,-1.0, -1.0);	# Left Of Triangle (Back)
-	glColor3f(0.0,0.0,1.0);			# Blue
-	glVertex3f(-1.0,-1.0, -1.0);	# Right Of
+    update_vertices(triangle_vertices)
+    global rtri, rquad
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity()
+    glTranslatef(-1.5,0.0,-6.0)
+    glRotatef(rtri,0.0,1.0,0.0)
+    glBegin(GL_TRIANGLES)
+    for i in range(4):
+        glVertex3f(triangle_vertices[0].x,triangle_vertices[0].y,triangle_vertices[0].z)
+        glVertex3f(triangle_vertices[i+1].x,triangle_vertices[i+1].y,triangle_vertices[i+1].z)
+        if(i==3):
+            glVertex3f(triangle_vertices[1].x,triangle_vertices[1].y,triangle_vertices[1].z)
+        else:    
+            glVertex3f(triangle_vertices[i+2].x,triangle_vertices[i+2].y,triangle_vertices[i+2].z)
+    glEnd()
+    glLoadIdentity()
+    glTranslatef(1.5,0.0,-7.0)
+    glRotatef(rquad,1.0,1.0,1.0)
+    rtri  = rtri + 0.2
+    rquad = rquad - 0.15
+    glutSwapBuffers()
 
 
-	glColor3f(1.0,0.0,0.0);			# Red
-	glVertex3f( 0.0, 1.0, 0.0);		# Top Of Triangle (Left)
-	glColor3f(0.0,0.0,1.0);			# Blue
-	glVertex3f(-1.0,-1.0,-1.0);		# Left Of Triangle (Left)
-	glColor3f(0.0,1.0,0.0);			# Green
-	glVertex3f(-1.0,-1.0, 1.0);		# Right Of Triangle (Left)
-	glEnd();
-
-
-	glLoadIdentity();
-	glTranslatef(1.5,0.0,-7.0);		# Move Right And Into The Screen
-	glRotatef(rquad,1.0,1.0,1.0);	# Rotate The Cube On X, Y & Z
-	glBegin(GL_QUADS);				# Start Drawing The Cube
-
-
-	glColor3f(0.0,1.0,0.0);			# Set The Color To Blue
-	glVertex3f( 1.0, 1.0,-1.0);		# Top Right Of The Quad (Top)
-	glVertex3f(-1.0, 1.0,-1.0);		# Top Left Of The Quad (Top)
-	glVertex3f(-1.0, 1.0, 1.0);		# Bottom Left Of The Quad (Top)
-	glVertex3f( 1.0, 1.0, 1.0);		# Bottom Right Of The Quad (Top)
-
-	glColor3f(1.0,0.5,0.0);			# Set The Color To Orange
-	glVertex3f( 1.0,-1.0, 1.0);		# Top Right Of The Quad (Bottom)
-	glVertex3f(-1.0,-1.0, 1.0);		# Top Left Of The Quad (Bottom)
-	glVertex3f(-1.0,-1.0,-1.0);		# Bottom Left Of The Quad (Bottom)
-	glVertex3f( 1.0,-1.0,-1.0);		# Bottom Right Of The Quad (Bottom)
-
-	glColor3f(1.0,0.0,0.0);			# Set The Color To Red
-	glVertex3f( 1.0, 1.0, 1.0);		# Top Right Of The Quad (Front)
-	glVertex3f(-1.0, 1.0, 1.0);		# Top Left Of The Quad (Front)
-	glVertex3f(-1.0,-1.0, 1.0);		# Bottom Left Of The Quad (Front)
-	glVertex3f( 1.0,-1.0, 1.0);		# Bottom Right Of The Quad (Front)
-
-	glColor3f(1.0,1.0,0.0);			# Set The Color To Yellow
-	glVertex3f( 1.0,-1.0,-1.0);		# Bottom Left Of The Quad (Back)
-	glVertex3f(-1.0,-1.0,-1.0);		# Bottom Right Of The Quad (Back)
-	glVertex3f(-1.0, 1.0,-1.0);		# Top Right Of The Quad (Back)
-	glVertex3f( 1.0, 1.0,-1.0);		# Top Left Of The Quad (Back)
-
-	glColor3f(0.0,0.0,1.0);			# Set The Color To Blue
-	glVertex3f(-1.0, 1.0, 1.0);		# Top Right Of The Quad (Left)
-	glVertex3f(-1.0, 1.0,-1.0);		# Top Left Of The Quad (Left)
-	glVertex3f(-1.0,-1.0,-1.0);		# Bottom Left Of The Quad (Left)
-	glVertex3f(-1.0,-1.0, 1.0);		# Bottom Right Of The Quad (Left)
-
-	glColor3f(1.0,0.0,1.0);			# Set The Color To Violet
-	glVertex3f( 1.0, 1.0,-1.0);		# Top Right Of The Quad (Right)
-	glVertex3f( 1.0, 1.0, 1.0);		# Top Left Of The Quad (Right)
-	glVertex3f( 1.0,-1.0, 1.0);		# Bottom Left Of The Quad (Right)
-	glVertex3f( 1.0,-1.0,-1.0);		# Bottom Right Of The Quad (Right)
-	glEnd();						# Done Drawing The Quad
-
-	rtri  = rtri + 0.2				# Increase The Rotation Variable For The Triangle
-	rquad = rquad - 0.15			# Decrease The Rotation Variable For The Quad
-
-	#  since this is double buffered, swap the buffers to display what just got drawn.
-	glutSwapBuffers()
-
-
-# The function called whenever a key is pressed. Note the use of Python tuples to pass in: (key, x, y)
 def keyPressed(key, x, y):
-	# If escape is pressed, kill everything.
-	# ord() is needed to get the keycode
-	if ord(key) == 27:
-		# Escape key = 27
-		glutLeaveMainLoop()
-		return
+    if ord(key) == 27:
+        glutLeaveMainLoop()
+        return
+    elif(ord(key) == 13):
+        print("boom")
+        triangle.transformate(triangle.vertices.create_scale_matrix(2))
+        DrawGLScene()
+        return
 
 
 def main():

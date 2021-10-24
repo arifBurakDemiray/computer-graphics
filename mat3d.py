@@ -56,7 +56,7 @@ class mat3d:
         """
         value = []
 
-        for z in range(4):
+        for z in range(int(len(matrix.content)/4)):
             for i in range(4):
                 total = 0
                 for y in range(4):
@@ -136,7 +136,7 @@ class mat3d:
         """
         return self.calc_multiplacation(self.__create_rotation_matrix_z(degree))
 
-    def __create_rotation_matrix_z(degree: float) -> 'mat3d':
+    def create_rotation_matrix_z(self, degree: float) -> 'mat3d':
         """
         This function creates rotation matrix for z axis
 
@@ -158,7 +158,7 @@ class mat3d:
         ])
 
 
-    def __create_rotation_matrix_y(degree: float) -> 'mat3d':
+    def create_rotation_matrix_y(self, degree: float) -> 'mat3d':
         """
         This function creates rotation matrix for y axis
 
@@ -179,7 +179,7 @@ class mat3d:
             0,0,0,1
         ])
 
-    def __create_rotation_matrix_x(degree: float) -> 'mat3d':
+    def create_rotation_matrix_x(self, degree: float) -> 'mat3d':
         """
         This function creates rotation matrix for x axis
 
@@ -202,7 +202,7 @@ class mat3d:
 
     
 
-    def __create_translation_matrix(vector: vec3d) -> 'mat3d':
+    def create_translation_matrix(self, vector: vec3d) -> 'mat3d':
         """
         This function creates translation matrix by given vec3d object
 
@@ -221,7 +221,7 @@ class mat3d:
             0,0,0,1
         ])
 
-    def __create_scale_matrix(constant: float) -> 'mat3d':
+    def create_scale_matrix(self, constant: float) -> 'mat3d':
         """
         This function creates scale matrix for given constant
 
