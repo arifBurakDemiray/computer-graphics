@@ -3,6 +3,7 @@
 # StudentId: 250201022
 # October 2021
 
+from types import FunctionType
 from mat3d import mat3d
 from vec3d import vec3d
 from OpenGL.GL import *
@@ -11,27 +12,69 @@ from OpenGL.GLU import *
 from polygon_helper import vectors_to_matrices
 import sys
 
+class RGBA:
+    r : float
+    g : float
+    b : float
+    a : float
+
+    def __init__(self,r : float, g : float, b : float, a : float = 0.0) -> 'RGBA':
+        self.r = r
+        self.b = b
+        self.g = g
+        self.a = a
+
+class ColoredVertex:
+    vertices: list[vec3d]
+    colors: list[RGBA]
+
+    def __init__(self,vertices: list[vec3d],color_provider: FunctionType) -> 'ColoredVertex':
+        self.vertices = vertices
+        self.colors = color_provider()
+
+
 class Polygon:
-    vertices = mat3d
-    matrix_stack = [mat3d]
+    vertices : mat3d
+    matrix_stack : list[mat3d]
 
     def __init__(self,vertices: list[vec3d]) -> 'Polygon':
         self.vertices = vectors_to_matrices(vertices)
+        self.matrix_stack = []
 
     def transformate(self, matrix: mat3d) -> None:
         self.matrix_stack.append(matrix)
         self.vertices = self.vertices.calc_multiplacation(matrix)
     
+    def rotate(self,degree: float) -> None:
+        matris_x = triangle.vertices.create_rotation_matrix_x(degree)
+        matris_y = triangle.vertices.create_rotation_matrix_y(degree)
+        matris_z = triangle.vertices.create_rotation_matrix_z(degree)
+        self.matrix_stack.extend([matris_x,matris_y,matris_z])
+        self.vertices = self.vertices.calc_rotation_x(degree)
+        self.vertices = self.vertices.calc_rotation_y(degree)
+        self.vertices = self.vertices.calc_rotation_z(degree)
+
+    def undo(self) -> None:
+        if(len(self.matrix_stack) < 1):
+            return
+        last_matrix = self.matrix_stack[len(self.matrix_stack) - 1]
+        self.matrix_stack.remove(last_matrix)
+        self.vertices = self.vertices.calc_multiplacation(last_matrix.calc_inverse())
+        
 
     def vertices_to_vectors(self) -> list[vec3d]:
         
-        result = [vec3d]
-        
+        result = []
+
         for i in range(int(len(self.vertices.content)/4) - 1):
             result.append(
-                vec3d(i*4,i*4+1,i*4+2,0)
+                vec3d(
+                    self.vertices.content[i*4],
+                    self.vertices.content[i*4+1],
+                    self.vertices.content[i*4+2],
+                    0)
             )
-        
+
         return result
 
 triangle_vertices = [
@@ -44,10 +87,6 @@ triangle_vertices = [
 
 triangle = Polygon(triangle_vertices)
 
-def update_vertices(triangle_vertices):
-    print("%s - %s - %s" % (triangle_vertices[0].x,triangle_vertices[0].y,triangle_vertices[0].z))
-    triangle_vertices = triangle.vertices_to_vectors()
-    print("%s - %s - %s" % (triangle_vertices[0].x,triangle_vertices[0].y,triangle_vertices[0].z))
 window = 0
 
 rtri = 0.0
@@ -78,26 +117,27 @@ def ReSizeGLScene(Width, Height):
 	glMatrixMode(GL_MODELVIEW)
 
 def DrawGLScene():
-    update_vertices(triangle_vertices)
+    vertices = triangle.vertices_to_vectors()
+
     global rtri, rquad
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
     glTranslatef(-1.5,0.0,-6.0)
-    glRotatef(rtri,0.0,1.0,0.0)
+   
     glBegin(GL_TRIANGLES)
     for i in range(4):
-        glVertex3f(triangle_vertices[0].x,triangle_vertices[0].y,triangle_vertices[0].z)
-        glVertex3f(triangle_vertices[i+1].x,triangle_vertices[i+1].y,triangle_vertices[i+1].z)
+        glColor3f(1.0,0.0,0.0);	
+        glVertex3f(vertices[0].x,vertices[0].y,vertices[0].z)
+        glColor3f(0.0,1.0,0.0);	
+        glVertex3f(vertices[i+1].x,vertices[i+1].y,vertices[i+1].z)
         if(i==3):
-            glVertex3f(triangle_vertices[1].x,triangle_vertices[1].y,triangle_vertices[1].z)
+            glColor3f(0.0,0.0,1.0);	
+            glVertex3f(vertices[1].x,vertices[1].y,vertices[1].z)
         else:    
-            glVertex3f(triangle_vertices[i+2].x,triangle_vertices[i+2].y,triangle_vertices[i+2].z)
+            glColor3f(0.0,0.0,1.0);	
+            glVertex3f(vertices[i+2].x,vertices[i+2].y,vertices[i+2].z)
     glEnd()
     glLoadIdentity()
-    glTranslatef(1.5,0.0,-7.0)
-    glRotatef(rquad,1.0,1.0,1.0)
-    rtri  = rtri + 0.2
-    rquad = rquad - 0.15
     glutSwapBuffers()
 
 
@@ -105,11 +145,19 @@ def keyPressed(key, x, y):
     if ord(key) == 27:
         glutLeaveMainLoop()
         return
-    elif(ord(key) == 13):
-        print("boom")
-        triangle.transformate(triangle.vertices.create_scale_matrix(2))
-        DrawGLScene()
+    elif(ord(key) == 119):
+        matris = triangle.vertices.create_scale_matrix(2)
+        triangle.transformate(matris)
         return
+    elif(ord(key) == 115):
+        matris = triangle.vertices.create_scale_matrix(0.5)
+        triangle.transformate(matris)
+        return
+    elif(ord(key) == 8):
+        triangle.undo()
+        return
+    elif(ord(key) == 32):
+        triangle.rotate(15)
 
 
 def main():

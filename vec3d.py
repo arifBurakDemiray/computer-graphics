@@ -10,12 +10,12 @@ class vec3d:
     """
     A vector class implemented for 3d
     """
-    x = 0
-    y = 0
-    z = 0
-    w = 0
+    x : float
+    y : float
+    z : float
+    w : float
 
-    def __init__(self,x,y,z,w) -> 'vec3d':
+    def __init__(self,x: float,y: float,z: float,w: float) -> 'vec3d':
         self.x = x
         self.y = y
         self.z = z

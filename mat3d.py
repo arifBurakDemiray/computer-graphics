@@ -18,9 +18,9 @@ class mat3d:
 
     so in the matrix [x,y] is equal to width(row)*y + x in the array
     """
-    content = []
+    content : list[float]
 
-    def __init__(self,content: list[int]) -> 'mat3d':
+    def __init__(self,content: list[float]) -> 'mat3d':
         self.content = content
 
     def calc_transpose(self) -> 'mat3d':
@@ -40,10 +40,21 @@ class mat3d:
 
         return mat3d(value)
 
+    def calc_inverse(self) -> 'mat3d':
+        dimensional = []
+        for i in range(int(len(self.content)/4)):
+            dimensional.append([
+                self.content[i*4],
+                self.content[i*4 + 1],
+                self.content[i*4 + 2],
+                self.content[i*4 + 3]])     
+        inversed = np.linalg.inv(dimensional)
+        return mat3d(inversed.flatten())
+
     def calc_multiplacation(self,matrix: 'mat3d') -> 'mat3d':
         """
-        Calculates multiplacation of two 4x4 matrices, 
-        it start multiplacation with parameter mat3d attribute
+        Calculates multiplacation of two matrices that have 4 columns second matrix should be 4x4 
+        it start multiplacation with caller mat3d
 
         Parameters:
 
@@ -56,11 +67,11 @@ class mat3d:
         """
         value = []
 
-        for z in range(int(len(matrix.content)/4)):
+        for z in range(int(len(self.content)/4)):
             for i in range(4):
                 total = 0
                 for y in range(4):
-                    total += matrix.content[z*4+y]*self.content[y*4 + i]
+                    total += self.content[z*4+y]*matrix.content[y*4 + i]
                 value.append(total)
 
         return mat3d(value)
@@ -106,7 +117,7 @@ class mat3d:
 
         Rotated matrix by x axis
         """
-        return self.calc_multiplacation(self.__create_rotation_matrix_x(degree))
+        return self.calc_multiplacation(self.create_rotation_matrix_x(degree))
 
     def calc_rotation_y(self, degree: float) -> 'mat3d':
         """
@@ -120,7 +131,7 @@ class mat3d:
 
         Rotated matrix by y axis
         """
-        return self.calc_multiplacation(self.__create_rotation_matrix_y(degree))
+        return self.calc_multiplacation(self.create_rotation_matrix_y(degree))
 
     def calc_rotation_z(self, degree: float) -> 'mat3d':
         """
@@ -134,7 +145,7 @@ class mat3d:
 
         Rotated matrix by z axis
         """
-        return self.calc_multiplacation(self.__create_rotation_matrix_z(degree))
+        return self.calc_multiplacation(self.create_rotation_matrix_z(degree))
 
     def create_rotation_matrix_z(self, degree: float) -> 'mat3d':
         """
