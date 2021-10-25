@@ -7,6 +7,14 @@ from vec3d import vec3d
 import numpy as np
 from helper import degree_to_radian,radian_to_degree
 
+class Pair:
+    transformer : 'mat3d'
+    transformed : 'mat3d'
+
+    def __init__(self,transformer : 'mat3d',transformed : 'mat3d') -> 'Pair':
+        self.transformer = transformer
+        self.transformed = transformed
+
 class mat3d:
     """
     This class holds a 4x4 matrix
@@ -76,7 +84,7 @@ class mat3d:
 
         return mat3d(value)
     
-    def calc_scale(self, constant: float) -> 'mat3d':
+    def calc_scale(self, constant: float) -> Pair:
         """
         This function calculates scaled version of caller mat3d object by given constant
 
@@ -88,9 +96,12 @@ class mat3d:
 
         Scaled new mat3d object of scaled caller mat3d object
         """
-        return self.calc_multiplacation(self.__create_scale_matrix(constant))
 
-    def calc_translation(self, vector: vec3d) -> 'mat3d':
+        matrix = self.create_scale_matrix(constant)
+
+        return Pair(matrix,self.calc_multiplacation(matrix))
+
+    def calc_translation(self, vector: vec3d) -> Pair:
         """
         This function calculates translation of mat3d matrix by given vec3d vector
 
@@ -102,10 +113,13 @@ class mat3d:
 
         new mat3d object that is translated by given vector
         """
-        return self.calc_multiplacation(self.__create_translation_matrix(vector))
+
+        matrix = self.create_translation_matrix(vector)
+
+        return Pair(matrix,self.calc_multiplacation(matrix))
 
     
-    def calc_rotation_x(self, degree: float) -> 'mat3d':
+    def calc_rotation_x(self, degree: float) -> Pair:
         """
         This function calculates rotated by x axis of given caller mat3d matrix
 
@@ -117,9 +131,12 @@ class mat3d:
 
         Rotated matrix by x axis
         """
-        return self.calc_multiplacation(self.create_rotation_matrix_x(degree))
 
-    def calc_rotation_y(self, degree: float) -> 'mat3d':
+        matris_x = self.create_rotation_matrix_x(degree)
+
+        return Pair(matris_x,self.calc_multiplacation(matris_x))
+
+    def calc_rotation_y(self, degree: float) -> Pair:
         """
         This function calculates rotated by y axis of given caller mat3d matrix
 
@@ -131,9 +148,12 @@ class mat3d:
 
         Rotated matrix by y axis
         """
-        return self.calc_multiplacation(self.create_rotation_matrix_y(degree))
 
-    def calc_rotation_z(self, degree: float) -> 'mat3d':
+        matris_y = self.create_rotation_matrix_y(degree)
+
+        return Pair(matris_y,self.calc_multiplacation(matris_y))
+
+    def calc_rotation_z(self, degree: float) -> Pair:
         """
         This function calculates rotated by z axis of given caller mat3d matrix
 
@@ -145,7 +165,25 @@ class mat3d:
 
         Rotated matrix by z axis
         """
-        return self.calc_multiplacation(self.create_rotation_matrix_z(degree))
+        
+        matris_z = self.create_rotation_matrix_z(degree)
+
+        return Pair(matris_z,self.calc_multiplacation(matris_z))
+
+    def calc_rotation(self,degree: float) -> Pair:
+
+        matrix = self.create_rotation_matrix(degree)
+
+        return Pair(matrix,self.calc_multiplacation(matrix))
+
+    def create_rotation_matrix(self, degree: float) -> 'mat3d':
+        matris_xyz = self.create_rotation_matrix_x(degree).calc_multiplacation(
+            self.create_rotation_matrix_y(degree)
+        ).calc_multiplacation(self.create_rotation_matrix_z(degree))
+        
+        return matris_xyz
+
+
 
     def create_rotation_matrix_z(self, degree: float) -> 'mat3d':
         """
@@ -226,10 +264,10 @@ class mat3d:
         Translation matrix
         """
         return mat3d([
-            1,0,0,vector.x,
-            0,1,0,vector.y,
-            0,0,1,vector.z,
-            0,0,0,1
+            1,0,0,0,
+            0,1,0,0,
+            0,0,1,0,
+            vector.x,vector.y,vector.z,1
         ])
 
     def create_scale_matrix(self, constant: float) -> 'mat3d':

@@ -4,6 +4,9 @@
 # October 2021
 
 from types import FunctionType
+
+from numpy import mat
+from numpy.lib.twodim_base import tri
 from mat3d import mat3d
 from vec3d import vec3d
 from OpenGL.GL import *
@@ -45,14 +48,27 @@ class Polygon:
         self.matrix_stack.append(matrix)
         self.vertices = self.vertices.calc_multiplacation(matrix)
     
+    def translate(self, x: float, y: float, z: float) -> None:
+        vector = vec3d(x,y,z,1.0)
+        result = self.vertices.calc_translation(vector)
+
+        self.vertices = result.transformed
+        self.matrix_stack.append(result.transformer)
+
     def rotate(self,degree: float) -> None:
-        matris_x = triangle.vertices.create_rotation_matrix_x(degree)
-        matris_y = triangle.vertices.create_rotation_matrix_y(degree)
-        matris_z = triangle.vertices.create_rotation_matrix_z(degree)
-        self.matrix_stack.extend([matris_x,matris_y,matris_z])
-        self.vertices = self.vertices.calc_rotation_x(degree)
-        self.vertices = self.vertices.calc_rotation_y(degree)
-        self.vertices = self.vertices.calc_rotation_z(degree)
+        vector = self.vertices_to_vectors()[0]
+
+        matrix = self.vertices.create_translation_matrix(vector.multiply(-1.0))
+        inv_matrix = matrix.calc_inverse()
+
+        rot_matrix = self.vertices.create_rotation_matrix(degree)
+
+        bir = matrix.calc_multiplacation(rot_matrix).calc_multiplacation(inv_matrix)
+
+        result = self.vertices.calc_multiplacation(matrix)
+
+        self.vertices = result
+        self.matrix_stack.append(matrix)
 
     def undo(self) -> None:
         if(len(self.matrix_stack) < 1):
@@ -72,17 +88,17 @@ class Polygon:
                     self.vertices.content[i*4],
                     self.vertices.content[i*4+1],
                     self.vertices.content[i*4+2],
-                    0)
+                    self.vertices.content[i*4+3])
             )
 
         return result
 
 triangle_vertices = [
-    vec3d(0.0,1.0,0.0,0.0),
-    vec3d(-1.0,-1.0,1.0,0.0),
-    vec3d(1.0,-1.0,1.0,0.0),
-    vec3d(1.0,-1.0,-1.0,0.0),
-    vec3d(-1.0,-1.0,-1.0,0.0)
+    vec3d(0.0,1.0,0.0,1.0),
+    vec3d(-1.0,-1.0,1.0,1.0),
+    vec3d(1.0,-1.0,1.0,1.0),
+    vec3d(1.0,-1.0,-1.0,1.0),
+    vec3d(-1.0,-1.0,-1.0,1.0)
 ]
 
 triangle = Polygon(triangle_vertices)
@@ -118,12 +134,10 @@ def ReSizeGLScene(Width, Height):
 
 def DrawGLScene():
     vertices = triangle.vertices_to_vectors()
-
     global rtri, rquad
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
     glTranslatef(-1.5,0.0,-6.0)
-   
     glBegin(GL_TRIANGLES)
     for i in range(4):
         glColor3f(1.0,0.0,0.0);	
@@ -158,6 +172,8 @@ def keyPressed(key, x, y):
         return
     elif(ord(key) == 32):
         triangle.rotate(15)
+    elif(ord(key) == 116):
+        triangle.translate(-1.5,0.0,-6.0)
 
 
 def main():
