@@ -59,6 +59,8 @@ window = 0
 triangle_degree = 1
 cube_degree = -1
 
+isStopped = False
+
 def InitGL(Width, Height):				
 	glClearColor(0.0, 0.0, 0.0, 0.0)	
 	glClearDepth(1.0)				
@@ -118,11 +120,10 @@ def DrawGLScene():
     glutSwapBuffers()
 
 def RotateOverTime() -> None:
-    global triangle_degree,cube_degree
-
-    time.sleep(0.04)
-
-    rotate_models()
+    if(not isStopped):
+        global triangle_degree,cube_degree
+        time.sleep(0.04)
+        rotate_models()
 
     DrawGLScene()
 
@@ -139,6 +140,8 @@ def keyPressed(key, x, y):
     elif(ord(key) == 8):
         undo_models()
     elif(ord(key) == 32):
+        global isStopped 
+        isStopped = True
         rotate_models()
     untranslate_models()
 
