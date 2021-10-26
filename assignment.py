@@ -106,7 +106,7 @@ def RotateOverTime() -> None:
 
 def keyPressed(key, x, y) -> None:
     translate_models()  # prepare space to the origin
-
+    global isStopped
     value = ord(key)
 
     if value == 27:  # Esc leave
@@ -120,11 +120,12 @@ def keyPressed(key, x, y) -> None:
     elif(value == 8):  # Backspace undo
         undo_models()
     elif(value == 32):  # Space start/stop
-        global isStopped
         isStopped = not isStopped
     elif(value == 100):  # D Rotate by triangle to the right
+        isStopped = True
         rotate_models(True)
     elif(value == 97):  # A Rotate by triangle to the left
+        isStopped = True
         rotate_models()
 
     untranslate_models()  # return it to its place
