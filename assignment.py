@@ -5,14 +5,13 @@
 
 from types import FunctionType
 
-from numpy import mat
-from numpy.lib.twodim_base import tri
 from mat3d import mat3d
 from vec3d import vec3d
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from polygon_helper import vectors_to_matrices
+import time
 import sys
 
 class RGBA:
@@ -61,6 +60,11 @@ class Polygon:
         else:
             self.translate_unregistered(vector.multiply(-1.0))
     
+    def scale(self, constant: float) -> None:
+        result = self.vertices.calc_scale(constant)
+        self.vertices = result.transformed
+        self.matrix_stack.append(result.transformer)
+
     def translate_unregistered(self, vector: vec3d) -> None:
         result = self.vertices.calc_translation(vector)
 
@@ -151,6 +155,8 @@ triangle = Polygon(triangle_vertices)
 cube = Polygon(cube_vertices)
 window = 0
 
+triangle_degree = 0.0
+cube_degree = 0.0
 rtri = 0.0
 
 rquad = 0.0
@@ -213,19 +219,28 @@ def DrawGLScene():
 
     glutSwapBuffers()
 
+def RotateOverTime() -> None:
+    global triangle_degree,cube_degree
+
+    time.sleep(0.05)
+
+    rotate_models()
+
+    triangle_degree = triangle_degree + 0.02
+    cube_degree = cube_degree - 0.015
+
+    DrawGLScene()
 
 def keyPressed(key, x, y):
     translate_models()
     if ord(key) == 27:
         glutLeaveMainLoop()
     elif(ord(key) == 119):
-        matris = triangle.vertices.create_scale_matrix(2)
-        triangle.transformate(matris)
-        cube.transformate(matris)
+        triangle.scale(2)
+        cube.scale(2)
     elif(ord(key) == 115):
-        matris = triangle.vertices.create_scale_matrix(0.5)
-        triangle.transformate(matris)
-        cube.transformate(matris)
+        triangle.scale(0.5)
+        cube.scale(0.5)
     elif(ord(key) == 8):
         undo_models()
     elif(ord(key) == 32):
@@ -237,8 +252,8 @@ def undo_models():
     cube.undo()
 
 def rotate_models():
-    triangle.rotate(2)
-    cube.rotate(2)
+    triangle.rotate(triangle_degree)
+    cube.rotate(cube_degree)
 
 def translate_models():
     triangle.plane_translate(0,triangle_translator)
@@ -257,7 +272,7 @@ def main():
     glutInitWindowPosition(0, 0)
     window = glutCreateWindow("CENG487 Development Env Test")
     glutDisplayFunc(DrawGLScene)
-    glutIdleFunc(DrawGLScene)
+    glutIdleFunc(RotateOverTime)
     glutReshapeFunc(ReSizeGLScene)
     glutKeyboardFunc(keyPressed)
     InitGL(640, 480)
