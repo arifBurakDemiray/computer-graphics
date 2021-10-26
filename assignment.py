@@ -55,26 +55,25 @@ class Polygon:
         self.vertices = result.transformed
         self.matrix_stack.append(result.transformer)
 
-    def plane_translate(self, inverse: int) -> None:
+    def plane_translate(self, inverse: int, vector: vec3d) -> None:
         if(inverse == 0):
-            self.translate_unregistered(-1.5,0.0,-6.0)
+            self.translate_unregistered(vector)
         else:
-            self.translate_unregistered(1.5,0.0,6.0)
+            self.translate_unregistered(vector.multiply(-1.0))
     
-    def translate_unregistered(self, x: float, y: float, z: float) -> None:
-        vector = vec3d(x,y,z,1.0)
+    def translate_unregistered(self, vector: vec3d) -> None:
         result = self.vertices.calc_translation(vector)
 
         self.vertices = result.transformed
 
     def rotate(self,degree: float) -> None:
         vector = self.vertices_to_vectors()[0]
-
+        #move to origin
         matrix = self.vertices.create_translation_matrix(vector.multiply(-1.0))
-        inv_matrix = matrix.calc_inverse()
+        inv_matrix = matrix.calc_inverse() #turn back to its place
 
         rot_matrix = self.vertices.create_rotation_matrix(degree)
-
+            
         bir = matrix.calc_multiplacation(rot_matrix).calc_multiplacation(inv_matrix)
 
         result = self.vertices.calc_multiplacation(bir)
@@ -105,6 +104,18 @@ class Polygon:
 
         return result
 
+
+class VertexRope:
+    links : list[int]
+    colors: list[RGBA]
+
+    def __init__(self,links : list[int],colors: list[RGBA]) -> 'VertexRope':
+        self.links = links
+        self.colors = colors
+
+cube_translator = vec3d(1.5,0.0,-7.0,1.0)
+triangle_translator = vec3d(-1.5,0.0,-6.0,1.0)
+
 triangle_vertices = [
     vec3d(0.0,1.0,0.0,1.0),
     vec3d(-1.0,-1.0,1.0,1.0),
@@ -112,9 +123,32 @@ triangle_vertices = [
     vec3d(1.0,-1.0,-1.0,1.0),
     vec3d(-1.0,-1.0,-1.0,1.0)
 ]
+tri_index = [VertexRope([0,1,2],[RGBA(1,0,0),RGBA(0,1,0),RGBA(0,0,1)]),
+            VertexRope([0,2,3],[RGBA(1,0,0),RGBA(0,0,1),RGBA(0,1,0)]),
+            VertexRope([0,3,4],[RGBA(1,0,0),RGBA(0,1,0),RGBA(0,0,1)]),
+            VertexRope([0,4,1],[RGBA(1,0,0),RGBA(0,0,1),RGBA(0,1,0)])]
+
+cube_vertices = [
+    vec3d(1.0, 1.0,-1.0,1.0),
+    vec3d(-1.0, 1.0,-1.0,1.0),
+    vec3d(-1.0, 1.0, 1.0,1.0),
+    vec3d(1.0, 1.0, 1.0,1.0),
+    vec3d(1.0,-1.0, 1.0,1.0),
+    vec3d(-1.0,-1.0, 1.0,1.0),
+    vec3d(-1.0,-1.0,-1.0,1.0),
+    vec3d(1.0,-1.0,-1.0,1.0)
+]
+
+cube_index = [
+    VertexRope([0,1,2,3],[RGBA(0,1,0)]),
+    VertexRope([2,1,6,5],[RGBA(1.0,0.5,0.0)]),
+    VertexRope([3,2,5,4],[RGBA(1,0,0)]),
+    VertexRope([4,5,6,7],[RGBA(1,1,0)]),
+    VertexRope([7,6,1,0],[RGBA(0,0,1)]),
+    VertexRope([0,3,4,7],[RGBA(1,0,1)])]
 
 triangle = Polygon(triangle_vertices)
-
+cube = Polygon(cube_vertices)
 window = 0
 
 rtri = 0.0
@@ -144,51 +178,78 @@ def ReSizeGLScene(Width, Height):
 	gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
 	glMatrixMode(GL_MODELVIEW)
 
+def DrawTriangle(triangle: Polygon):
+    glLoadIdentity()
+    glBegin(GL_TRIANGLES)
+    vertices = triangle.vertices_to_vectors()
+    for rope in tri_index:
+        for i in range(len(rope.links)):
+            rgb = rope.colors[i]
+            glColor3f(rgb.r,rgb.b,rgb.g)	
+            glVertex3f(vertices[rope.links[i]].x,vertices[rope.links[i]].y,vertices[rope.links[i]].z)
+    
+    glEnd()
+    
+    
+def DrawCube(cube: Polygon):
+    glLoadIdentity()
+    glBegin(GL_QUADS)
+    vertices = cube.vertices_to_vectors()
+
+    for rope in cube_index:
+        rgb = rope.colors[0]
+        glColor3f(rgb.r,rgb.b,rgb.g)
+        for i in range(len(rope.links)):	
+            glVertex3f(vertices[rope.links[i]].x,vertices[rope.links[i]].y,vertices[rope.links[i]].z)
+    glEnd()
+
 def DrawGLScene():
     global rtri, rquad
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glLoadIdentity()
-    vertices = triangle.vertices_to_vectors()
+    
+    DrawTriangle(triangle)
 
-    glBegin(GL_TRIANGLES)
-    for i in range(4):
-        glColor3f(1.0,0.0,0.0);	
-        glVertex3f(vertices[0].x,vertices[0].y,vertices[0].z)
-        glColor3f(0.0,1.0,0.0);	
-        glVertex3f(vertices[i+1].x,vertices[i+1].y,vertices[i+1].z)
-        if(i==3):
-            glColor3f(0.0,0.0,1.0);	
-            glVertex3f(vertices[1].x,vertices[1].y,vertices[1].z)
-        else:    
-            glColor3f(0.0,0.0,1.0);	
-            glVertex3f(vertices[i+2].x,vertices[i+2].y,vertices[i+2].z)
-    glEnd()
-    glLoadIdentity()
+    DrawCube(cube)
+
     glutSwapBuffers()
 
 
 def keyPressed(key, x, y):
-    triangle.plane_translate(1)
+    translate_models()
     if ord(key) == 27:
         glutLeaveMainLoop()
     elif(ord(key) == 119):
         matris = triangle.vertices.create_scale_matrix(2)
         triangle.transformate(matris)
+        cube.transformate(matris)
     elif(ord(key) == 115):
         matris = triangle.vertices.create_scale_matrix(0.5)
         triangle.transformate(matris)
+        cube.transformate(matris)
     elif(ord(key) == 8):
-        triangle.undo()
+        undo_models()
     elif(ord(key) == 32):
-        triangle.rotate(15)
-    elif(ord(key) == 116):
-        triangle.translate(-1.5,0.0,-6.0)
-    triangle.plane_translate(0)
+        rotate_models()
+    untranslate_models()
 
+def undo_models():
+    triangle.undo()
+    cube.undo()
+
+def rotate_models():
+    triangle.rotate(2)
+    cube.rotate(2)
+
+def translate_models():
+    triangle.plane_translate(0,triangle_translator)
+    cube.plane_translate(0,cube_translator)
+
+def untranslate_models():
+    triangle.plane_translate(1,triangle_translator)
+    cube.plane_translate(1,cube_translator)
 
 def main():
-    triangle.plane_translate(0)
-
+    translate_models()
     global window
     glutInit(sys.argv)
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
