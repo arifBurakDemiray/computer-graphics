@@ -55,6 +55,18 @@ class Polygon:
         self.vertices = result.transformed
         self.matrix_stack.append(result.transformer)
 
+    def plane_translate(self, inverse: int) -> None:
+        if(inverse == 0):
+            self.translate_unregistered(-1.5,0.0,-6.0)
+        else:
+            self.translate_unregistered(1.5,0.0,6.0)
+    
+    def translate_unregistered(self, x: float, y: float, z: float) -> None:
+        vector = vec3d(x,y,z,1.0)
+        result = self.vertices.calc_translation(vector)
+
+        self.vertices = result.transformed
+
     def rotate(self,degree: float) -> None:
         vector = self.vertices_to_vectors()[0]
 
@@ -65,10 +77,10 @@ class Polygon:
 
         bir = matrix.calc_multiplacation(rot_matrix).calc_multiplacation(inv_matrix)
 
-        result = self.vertices.calc_multiplacation(matrix)
+        result = self.vertices.calc_multiplacation(bir)
 
         self.vertices = result
-        self.matrix_stack.append(matrix)
+        self.matrix_stack.append(bir)
 
     def undo(self) -> None:
         if(len(self.matrix_stack) < 1):
@@ -133,11 +145,11 @@ def ReSizeGLScene(Width, Height):
 	glMatrixMode(GL_MODELVIEW)
 
 def DrawGLScene():
-    vertices = triangle.vertices_to_vectors()
     global rtri, rquad
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
-    glTranslatef(-1.5,0.0,-6.0)
+    vertices = triangle.vertices_to_vectors()
+
     glBegin(GL_TRIANGLES)
     for i in range(4):
         glColor3f(1.0,0.0,0.0);	
@@ -156,71 +168,39 @@ def DrawGLScene():
 
 
 def keyPressed(key, x, y):
+    triangle.plane_translate(1)
     if ord(key) == 27:
         glutLeaveMainLoop()
-        return
     elif(ord(key) == 119):
         matris = triangle.vertices.create_scale_matrix(2)
         triangle.transformate(matris)
-        return
     elif(ord(key) == 115):
         matris = triangle.vertices.create_scale_matrix(0.5)
         triangle.transformate(matris)
-        return
     elif(ord(key) == 8):
         triangle.undo()
-        return
     elif(ord(key) == 32):
         triangle.rotate(15)
     elif(ord(key) == 116):
         triangle.translate(-1.5,0.0,-6.0)
+    triangle.plane_translate(0)
 
 
 def main():
-	global window
-	glutInit(sys.argv)
+    triangle.plane_translate(0)
 
-	# Select type of Display mode:
-	#  Double buffer
-	#  RGBA color
-	#  Alpha components supported
-	#  Depth buffer
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
+    global window
+    glutInit(sys.argv)
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
+    glutInitWindowSize(640, 480)
+    glutInitWindowPosition(0, 0)
+    window = glutCreateWindow("CENG487 Development Env Test")
+    glutDisplayFunc(DrawGLScene)
+    glutIdleFunc(DrawGLScene)
+    glutReshapeFunc(ReSizeGLScene)
+    glutKeyboardFunc(keyPressed)
+    InitGL(640, 480)
+    glutMainLoop()
 
-	# get a 640 x 480 window
-	glutInitWindowSize(640, 480)
-
-	# the window starts at the upper left corner of the screen
-	glutInitWindowPosition(0, 0)
-
-	# Okay, like the C version we retain the window id to use when closing, but for those of you new
-	# to Python (like myself), remember this assignment would make the variable local and not global
-	# if it weren't for the global declaration at the start of main.
-	window = glutCreateWindow("CENG487 Development Env Test")
-
-   	# Register the drawing function with glut, BUT in Python land, at least using PyOpenGL, we need to
-	# set the function pointer and invoke a function to actually register the callback, otherwise it
-	# would be very much like the C version of the code.
-	glutDisplayFunc(DrawGLScene)
-
-	# Uncomment this line to get full screen.
-	# glutFullScreen()
-
-	# When we are doing nothing, redraw the scene.
-	glutIdleFunc(DrawGLScene)
-
-	# Register the function called when our window is resized.
-	glutReshapeFunc(ReSizeGLScene)
-
-	# Register the function called when the keyboard is pressed.
-	glutKeyboardFunc(keyPressed)
-
-	# Initialize our window.
-	InitGL(640, 480)
-
-	# Start Event Processing Engine
-	glutMainLoop()
-
-# Print message to console, and kick off the main to get it rolling.
 print ("Hit ESC key to quit.")
 main()
