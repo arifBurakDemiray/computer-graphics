@@ -270,6 +270,14 @@ class mat3d:
             vector.x,vector.y,vector.z,1
         ])
 
+    def create_shear_matrix(self,xy: float, yx: float, xz: float, zx: float,yz: float, zy: float) -> 'mat3d':
+        return mat3d([
+            1,yx,zx,0,
+            xy,1,zy,0,
+            xz,yz,1,0,
+            0,0,0,1
+        ])
+        
     def create_scale_matrix(self, constant: float) -> 'mat3d':
         """
         This function creates scale matrix for given constant

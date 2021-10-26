@@ -59,7 +59,14 @@ class Polygon:
             self.translate_unregistered(vector)
         else:
             self.translate_unregistered(vector.multiply(-1.0))
-    
+    #TODO take care of shear
+    def shear(self) -> None:
+        matrix = self.vertices.create_shear_matrix(1,-1,8,-8,3,-3)
+
+        self.vertices = self.vertices.calc_multiplacation(matrix)
+
+        self.matrix_stack.append(matrix)
+
     def scale(self, constant: float) -> None:
         result = self.vertices.calc_scale(constant)
         self.vertices = result.transformed
@@ -245,6 +252,8 @@ def keyPressed(key, x, y):
         undo_models()
     elif(ord(key) == 32):
         rotate_models()
+    elif(ord(key) == 109):
+        triangle.shear()
     untranslate_models()
 
 def undo_models():
@@ -272,7 +281,7 @@ def main():
     glutInitWindowPosition(0, 0)
     window = glutCreateWindow("CENG487 Development Env Test")
     glutDisplayFunc(DrawGLScene)
-    glutIdleFunc(RotateOverTime)
+    glutIdleFunc(DrawGLScene)
     glutReshapeFunc(ReSizeGLScene)
     glutKeyboardFunc(keyPressed)
     InitGL(640, 480)
