@@ -6,6 +6,7 @@
 from vec3d import vec3d
 from mat3d import mat3d
 
+
 def vectors_to_matrices(vectors: list[vec3d]) -> mat3d:
     """
     This function converts list of vertices to mat3d instance
@@ -26,8 +27,8 @@ def vectors_to_matrices(vectors: list[vec3d]) -> mat3d:
 
         temp = vectors[i]
 
-        content.extend([temp.x,temp.y,temp.z,temp.w])
-    
-    content.extend([0,0,0,1]) #for the homogeneous coordinates
+        content.extend([temp.x, temp.y, temp.z, temp.w])
+
+    content.extend([0, 0, 0, 1])  # for the homogeneous coordinates
 
     return mat3d(content)
