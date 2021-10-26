@@ -6,20 +6,27 @@
 from vec3d import vec3d
 from mat3d import mat3d
 from polygon_helper import vectors_to_matrices
-from vertex_color import VertexRope
+from vertex_color import VertexLink
 
 
 class Polygon:
+    """
+    This class holds informations about a 3d polygon
+
+    its vertices, links and transformation matrix stack
+    """
     vertices : mat3d
     matrix_stack : list[mat3d]
-    vertex_links : list[VertexRope]
+    vertex_links : list[VertexLink]
 
-    def __init__(self,vertices: list[vec3d], vertex_links : list[VertexRope]) -> 'Polygon':
+    def __init__(self,vertices: list[vec3d], vertex_links : list[VertexLink]) -> None:
         self.vertices = vectors_to_matrices(vertices)
         self.matrix_stack = []
         self.vertex_links = vertex_links
 
     def transformate(self, matrix: mat3d) -> None:
+        """
+        """
         self.matrix_stack.append(matrix)
         self.vertices = self.vertices.calc_multiplacation(matrix)
     
