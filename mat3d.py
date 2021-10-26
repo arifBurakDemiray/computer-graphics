@@ -291,7 +291,7 @@ class mat3d:
         Scale matrix for constant value
         """
         return mat3d(
-            [constant,0,0,0,
-            0,constant,0,0,
-            0,0,constant,0,
+            [1/constant,0,0,0,
+            0,1/constant,0,0,
+            0,0,1/constant,0,
             0,0,0,1])

@@ -3,63 +3,28 @@
 # StudentId: 250201022
 # October 2021
 
-from mat3d import mat3d
+from factory import create_cube, create_triangle
 from polygon import Polygon
 from vec3d import vec3d
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-from polygon_helper import vectors_to_matrices
 import time
 import sys
-
-from vertex_color import RGBA, VertexRope
-
-
 
 cube_translator = vec3d(1.5,0.0,-7.0,1.0)
 triangle_translator = vec3d(-1.5,0.0,-6.0,1.0)
 
-triangle = Polygon([
-                        vec3d(0.0,1.0,0.0,1.0),
-                        vec3d(-1.0,-1.0,1.0,1.0),
-                        vec3d(1.0,-1.0,1.0,1.0),
-                        vec3d(1.0,-1.0,-1.0,1.0),
-                        vec3d(-1.0,-1.0,-1.0,1.0)
-                    ],
-                    [
-                        VertexRope([0,1,2],[RGBA(1,0,0),RGBA(0,1,0),RGBA(0,0,1)]),
-                        VertexRope([0,2,3],[RGBA(1,0,0),RGBA(0,0,1),RGBA(0,1,0)]),
-                        VertexRope([0,3,4],[RGBA(1,0,0),RGBA(0,1,0),RGBA(0,0,1)]),
-                        VertexRope([0,4,1],[RGBA(1,0,0),RGBA(0,0,1),RGBA(0,1,0)])
-                    ])
+triangle = create_triangle()
 
+cube = create_cube()
 
-cube = Polygon([
-                    vec3d(1.0, 1.0,-1.0,1.0),
-                    vec3d(-1.0, 1.0,-1.0,1.0),
-                    vec3d(-1.0, 1.0, 1.0,1.0),
-                    vec3d(1.0, 1.0, 1.0,1.0),
-                    vec3d(1.0,-1.0, 1.0,1.0),
-                    vec3d(-1.0,-1.0, 1.0,1.0),
-                    vec3d(-1.0,-1.0,-1.0,1.0),
-                    vec3d(1.0,-1.0,-1.0,1.0)
-                ],
-                [
-                    VertexRope([0,1,2,3],[RGBA(0,1,0)]),
-                    VertexRope([2,1,6,5],[RGBA(1.0,0.5,0.0)]),
-                    VertexRope([3,2,5,4],[RGBA(1,0,0)]),
-                    VertexRope([4,5,6,7],[RGBA(1,1,0)]),
-                    VertexRope([7,6,1,0],[RGBA(0,0,1)]),
-                    VertexRope([0,3,4,7],[RGBA(1,0,1)])
-                ]
-                )
 window = 0
 
 triangle_degree = 1
 cube_degree = -1
 
-isStopped = False
+isStopped = True
 
 def InitGL(Width, Height):				
 	glClearColor(0.0, 0.0, 0.0, 0.0)	
@@ -123,35 +88,43 @@ def RotateOverTime() -> None:
     if(not isStopped):
         global triangle_degree,cube_degree
         time.sleep(0.04)
+        translate_models()
         rotate_models()
+        untranslate_models()
 
     DrawGLScene()
 
 def keyPressed(key, x, y):
-    translate_models()
-    if ord(key) == 27:
+    translate_models() #prepare space to the origin
+
+    value = ord(key)
+
+    if value == 27: #Esc leave
         glutLeaveMainLoop()
-    elif(ord(key) == 119):
+    elif(value == 119): #W zoom in
         triangle.scale(2)
         cube.scale(2)
-    elif(ord(key) == 115):
+    elif(value == 115): #S zoom out
         triangle.scale(0.5)
         cube.scale(0.5)
-    elif(ord(key) == 8):
+    elif(value == 8): #Backspace undo
         undo_models()
-    elif(ord(key) == 32):
+    elif(value == 32): #Space start/stop
         global isStopped 
-        isStopped = True
+        isStopped = not isStopped
+    elif(value == 100): #D Rotate by triangle to the right
+        rotate_models(True)
+    elif(value == 97): #A Rotate by triangle to the left
         rotate_models()
-    untranslate_models()
+    untranslate_models() #return it to its place
 
 def undo_models():
     triangle.undo()
     cube.undo()
 
-def rotate_models():
-    triangle.rotate(triangle_degree)
-    cube.rotate(cube_degree)
+def rotate_models(inversed: bool = False):
+    triangle.rotate(triangle_degree*-1 if inversed else triangle_degree)
+    cube.rotate(cube_degree*-1 if inversed else cube_degree)
 
 def translate_models():
     triangle.plane_translate(0,triangle_translator)
@@ -168,7 +141,7 @@ def main():
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
     glutInitWindowSize(640, 480)
     glutInitWindowPosition(0, 0)
-    window = glutCreateWindow("CENG487 Development Env Test")
+    window = glutCreateWindow("CENG487 Assignment 1")
     glutDisplayFunc(DrawGLScene)
     glutIdleFunc(RotateOverTime)
     glutReshapeFunc(ReSizeGLScene)
@@ -176,5 +149,14 @@ def main():
     InitGL(640, 480)
     glutMainLoop()
 
-print ("Hit ESC key to quit.")
+print (
+    "------------------------------------------------\n"+
+    "[/_\] Hit ESC key to quit\n"+ 
+    "[\_/] Hit W to zoom in, S to zoom out\n"+
+    "[/_\] Hit D to rotate manually to right by triangle\n"+
+    "[\_/] Hit A to rotate manually to left by triangle\n"+
+    "[/_\] Hit SPACE to Start/Stop the rotation\n"+
+    "[\_/] Hit BACKSPACE to Undo\n"+
+    "------------------------------------------------"
+    )
 main()
