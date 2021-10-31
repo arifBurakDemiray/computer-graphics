@@ -98,7 +98,7 @@ class vec3d:
 
         New vec3d object vector is added to the caller object
         """
-        return vec3d(self.x+vector.x, self.y+vector.y+self.z+vector.z, self.__check_homo_index(vector))
+        return vec3d(self.x+vector.x, self.y+vector.y,self.z+vector.z, self.__check_homo_index(vector))
 
     def multiply(self, constant: float) -> 'vec3d':
         """
@@ -224,7 +224,7 @@ class vec3d:
         """
         return self.multiply(1/self.calc_length())
 
-    def __check_homo_index(self, vector: 'vec3d') -> int:
+    def __check_homo_index(self, vector: 'vec3d') -> float:
         """
         Checks whether they have same homogenous value or not
 
@@ -237,7 +237,11 @@ class vec3d:
         1 if they have 1 as homogenous value otherwise 0
 
         """
-        return 1 if (self.w == 1 & vector.w == 1) else 0
+
+        if self.w == 1.0 and vector.w == 1.0:
+            return 1
+        else:
+            return 0
 
     def __check_value(self, val):
         """

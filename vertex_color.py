@@ -3,6 +3,8 @@
 # StudentId: 250201022
 # October 2021
 
+from numpy.random import random_sample
+
 class RGBA:
     """
     This class holds r,g,b and a values of a color
@@ -17,6 +19,9 @@ class RGBA:
         self.b = b
         self.g = g
         self.a = a
+
+    def pick_random_color() -> 'RGBA':
+        return RGBA(random_sample(),random_sample(),random_sample())
 
 
 class VertexLink:

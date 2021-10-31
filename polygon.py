@@ -6,7 +6,7 @@
 from vec3d import vec3d
 from mat3d import mat3d
 from polygon_helper import vectors_to_matrices
-from vertex_color import VertexLink
+from vertex_color import RGBA, VertexLink
 
 
 class Polygon:
@@ -18,11 +18,15 @@ class Polygon:
     vertices: mat3d
     matrix_stack: list[mat3d]
     vertex_links: list[VertexLink]
+    level: int
 
-    def __init__(self, vertices: list[vec3d], vertex_links: list[VertexLink]) -> None:
+    def __init__(self, vertices: list[vec3d], vertex_links: list[VertexLink], level: int = 0) -> None:
+        #TODO make type checker
+
         self.vertices = vectors_to_matrices(vertices)
         self.matrix_stack = []
         self.vertex_links = vertex_links
+        self.level = level
 
     def transformate(self, matrix: mat3d) -> None:
         """
@@ -47,7 +51,11 @@ class Polygon:
         result = self.vertices.calc_translation(vector)
 
         self.vertices = result.transformed
-        self.matrix_stack.append(result.transformer)
+        #self.matrix_stack.append(result.transformer)
+
+    def set_vertices(self,vertices: mat3d) -> 'Polygon':
+        self.vertices = vertices
+        return self
 
     def plane_translate(self, inverse: int, vector: vec3d) -> None:
         """
@@ -97,7 +105,17 @@ class Polygon:
         """
         result = self.vertices.calc_scale(constant)
         self.vertices = result.transformed
-        self.matrix_stack.append(result.transformer)
+        #self.matrix_stack.append(result.transformer)
+
+    def change_colors(self) -> 'Polygon':
+        for link in self.vertex_links:
+            for i in range(len(link.colors)):
+                link.colors[i]=RGBA.pick_random_color()
+        
+        return self
+
+    def create_hard_copy(self) -> 'Polygon':
+        return Polygon(self.vertices_to_vectors(),self.vertex_links,self.level).set_vertices(self.vertices)
 
     def rotate(self, degree: float) -> None:
         """
