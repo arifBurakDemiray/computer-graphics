@@ -59,13 +59,15 @@ def create_sub_level_cubes(level: int,parent: Polygon, factor: float) -> list[Po
     if(parent.level != level-1):
         return None
 
-    first_sub : Polygon = Polygon(parent.vertices_to_vectors(),[
+    first_sub : Polygon = parent.create_hard_copy(level,[
         VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
         VertexLink([3, 2, 5, 4], [RGBA.pick_random_color()]),
-    ],level)
+    ])
     first_sub.scale(0.5)
 
-    translation : vec3d = parent.vertices_to_vectors()[5].subtract(first_sub.vertices_to_vectors()[5]) 
+    translation : vec3d = vec3d(
+        parent.vertices.content[20],parent.vertices.content[21],parent.vertices.content[22],1.0).subtract(
+            vec3d(first_sub.vertices.content[20],first_sub.vertices.content[21],first_sub.vertices.content[22],1.0)) 
 
     first_sub.translate(translation.x,translation.y,translation.z)
 
@@ -82,10 +84,10 @@ def create_sub_level_cubes(level: int,parent: Polygon, factor: float) -> list[Po
     result_list = [first_sub]
 
     for sub_vector in sub_vectors:
-        temp : Polygon = Polygon(first_sub.vertices_to_vectors(),[
+        temp : Polygon = first_sub.create_hard_copy(level,[
         VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
         VertexLink([3, 2, 5, 4], [RGBA.pick_random_color()]),
-    ],level)
+    ])
         temp.translate(sub_vector.x,sub_vector.y,sub_vector.z)
         result_list.append(temp)
 

@@ -91,9 +91,6 @@ def PopulateUpLevel() -> None:
     cubes.extend(sub_models)
     
 
-        
-    #TODO fix translation problem
-
 def PopulateDownLevel() -> None:
     global level,factor
     if(level == 0):

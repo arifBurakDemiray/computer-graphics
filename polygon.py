@@ -134,7 +134,7 @@ class Polygon:
         
         link_vertex = links if links != None else self.vertex_links
 
-        return Polygon(self.vertices_to_vectors(),link_vertex,level)
+        return Polygon(None,link_vertex,level).set_vertices(self.vertices)
         
 
     def rotate(self, degree: float) -> None:
