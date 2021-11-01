@@ -23,7 +23,8 @@ class Polygon:
     def __init__(self, vertices: list[vec3d], vertex_links: list[VertexLink], level: int = 0) -> None:
         #TODO make type checker
 
-        self.vertices = vectors_to_matrices(vertices)
+        if(vertices != None):
+            self.vertices = vectors_to_matrices(vertices)
         self.matrix_stack = []
         self.vertex_links = vertex_links
         self.level = level
@@ -107,6 +108,21 @@ class Polygon:
         self.vertices = result.transformed
         #self.matrix_stack.append(result.transformer)
 
+    def scale_and_return(self,constant: float) -> list[vec3d]:
+        resultt = self.vertices.calc_scale(constant)
+        result = []
+
+        for i in range(int(len(resultt.transformed.content)/4) - 1):  # do not get last row
+            result.append(
+                vec3d(
+                    resultt.transformed.content[i*4],
+                    resultt.transformed.content[i*4+1],
+                    resultt.transformed.content[i*4+2],
+                    resultt.transformed.content[i*4+3])
+            )
+
+        return result
+
     def change_colors(self) -> 'Polygon':
         for link in self.vertex_links:
             for i in range(len(link.colors)):
@@ -114,8 +130,12 @@ class Polygon:
         
         return self
 
-    def create_hard_copy(self) -> 'Polygon':
-        return Polygon(self.vertices_to_vectors(),self.vertex_links,self.level).set_vertices(self.vertices)
+    def create_hard_copy(self,level: int, links: list[VertexLink] = None) -> 'Polygon':
+        
+        link_vertex = links if links != None else self.vertex_links
+
+        return Polygon(self.vertices_to_vectors(),link_vertex,level)
+        
 
     def rotate(self, degree: float) -> None:
         """

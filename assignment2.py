@@ -77,71 +77,71 @@ def DrawGLScene() -> None:
     glutSwapBuffers()
 
 def PopulateUpLevel() -> None:
-    global level,factor,max_level
+    global level,factor#,max_level
     level+=1
-    if(max_level>=level):
-        return
-    max_level+=1
-    factor=factor/2
-
+    # if(max_level>=level):
+    #     return
+    # max_level+=1
     sub_models : list[Polygon] = []
 
-    #untranslate_models(level-1)
-
     for model in cubes:
-        if(model.level+1==level):
+        if(model != None and model.level+1==level):
             sub_models.extend(create_sub_level_cubes(level,model,factor))
-
+    factor=factor/2
     cubes.extend(sub_models)
+    
 
         
-    
+    #TODO fix translation problem
 
 def PopulateDownLevel() -> None:
     global level,factor
     if(level == 0):
         return
-    factor = factor*2
+    factor=factor*2
+    last_comers = 8**level
+
+    for i in range(last_comers):
+        cubes.remove(cubes[-1])
+
     level-=1
 
-#fix infinite loop
-
 def keyPressed(key, x, y) -> None:
-    #translate_models()  # prepare space to the origin
+  
+    untranslate_models()
     value = ord(key)
     if value == 27:  # Esc leave
         glutLeaveMainLoop()
-    if value == 43:
+    elif value == 43:
         PopulateUpLevel()
-    if value == 45:
+    elif value == 45:
         PopulateDownLevel()
-
-    #untranslate_models()
       # return it to its place
+    translate_models()
 
 
-def translate_models() -> None:
+def translate_models(init_level: int = level, all : bool = True) -> None:
     """
     Translates models to the origin
     """
 
     for model in cubes:
-        if(model.level == level):
+        if(all or model.level == init_level):
             model.plane_translate(0, cube_translator)
 
 
-def untranslate_models(init_level: int = level) -> None:
+def untranslate_models(init_level: int = level, all : bool = True) -> None:
     """
     Untranslates models to their start vertices
     """
 
     for model in cubes:
-        if(model.level == init_level):
+        if(all or model.level == init_level):
             model.plane_translate(1, cube_translator)
 
 
 def main() -> None:
-    #translate_models() #Firstly put models to their locations
+    translate_models() #Firstly put models to their locations
     global window
     glutInit(sys.argv)
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
