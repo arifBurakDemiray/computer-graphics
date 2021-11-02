@@ -3,6 +3,7 @@
 # StudentId: 250201022
 # November 2021
 
+from numpy.lib.type_check import real
 from .polygon import Polygon
 from .vec3d import vec3d
 from .vertex_color import RGBA, VertexLink
@@ -113,58 +114,82 @@ def create_sub_level_cubes(level: int,parent: Polygon, factor: float) -> list[Po
 
 
     return result_list
-    
-# #/2, x,y,z xy, xz, yz, xyz
-# def create_sub_level_cubes_f(level: int,parent: Polygon, factor: float) -> list[Polygon]:
+  
+def F(u,v,r) -> vec3d:
+    return vec3d(numpy.cos(u)*numpy.sin(v)*r, numpy.cos(v)*r, numpy.sin(u)*numpy.sin(v)*r,1.0)
 
-#     if(parent.level != level-1):
-#         return None
 
-#     for vertex in parent.vertices_to_vectors():
-#         print("%s %s %s %s" % (vertex.x,vertex.y,vertex.z,vertex.w))
+def create_sphere(level: int, factor: int, radius: float) -> Polygon:
+    startU=0
+    startV=0
+    endU=numpy.pi*2
+    endV=numpy.pi
+    stepU=(endU-startU)/factor
+    stepV=(endV-startV)/factor
+    result = []
 
-#     temp_pol = Polygon(parent.vertices_to_vectors(),None,None)
-#     temp_pol.scale(1/2)
-#     first_sub : list[vec3d] = temp_pol.vertices_to_vectors() 
+    vertices : list[vec3d] = []
+    links: list[VertexLink] = []
 
-#     sub_vectors : list[vec3d] = [
-#         vec3d(factor,0.0,0.0,1.0),
-#         vec3d(0.0,factor,0.0,1.0),
-#         vec3d(0.0,0.0,factor,1.0),
-#         vec3d(factor,factor,0.0,1.0),
-#         vec3d(factor,0.0,factor,1.0),
-#         vec3d(0.0,factor,factor,1.0),
-#         vec3d(factor,factor,factor,1.0)
-#     ]
+    for i in range(factor):
+        for j in range(factor):
+            u=i*stepU+startU
+            v=j*stepV+startV
+            un= endU if (i+1==factor) else (i+1)*stepU+startU
+            vn= endV if (j+1==factor)  else (j+1)*stepV+startV
+            color = RGBA.pick_random_color()
+            vertices.extend([F(u, v, radius),F(u, vn, radius),F(un, v, radius),F(un, vn, radius)])
+            len_vert = len(vertices) -1
+            links.extend([VertexLink([len_vert-3,len_vert-1,len_vert-2],[color]),
+            VertexLink([len_vert,len_vert-2,len_vert-1],[color])])
+        
 
-#     result_list = []
+    return Polygon(vertices,links,level)
 
-#     for ver in first_sub:
-#         print("%s %s %s %s" % (ver.x,ver.y,ver.z,ver.w))
+def create_trapezoid() -> list[Polygon]:
+    """
+    This function creates a cube polygon for the main app
 
-#     for sub_vector in sub_vectors:
-#         temp_vertex : list[vec3d] = []
-#         for vertex in first_sub:
-#             temp_vertex.append(vertex.add(sub_vector))
-#         for ver in temp_vertex:
-#             print("%s %s %s %s" % (ver.x,ver.y,ver.z,ver.w))
-#         result_list.append(Polygon(temp_vertex,[
-#         VertexLink([0, 1, 2, 3], [RGBA.pick_random_color()]),
-#         VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
-#         VertexLink([3, 2, 5, 4], [RGBA.pick_random_color()]),
-#         VertexLink([4, 5, 6, 7], [RGBA.pick_random_color()]),
-#         VertexLink([7, 6, 1, 0], [RGBA.pick_random_color()]),
-#         VertexLink([0, 3, 4, 7], [RGBA.pick_random_color()])
-#     ],level))
+    Returns:
 
-#     result_list.append(Polygon(first_sub,[
-#         VertexLink([0, 1, 2, 3], [RGBA.pick_random_color()]),
-#         VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
-#         VertexLink([3, 2, 5, 4], [RGBA.pick_random_color()]),
-#         VertexLink([4, 5, 6, 7], [RGBA.pick_random_color()]),
-#         VertexLink([7, 6, 1, 0], [RGBA.pick_random_color()]),
-#         VertexLink([0, 3, 4, 7], [RGBA.pick_random_color()])
-#     ],level))
+    A cube polygon
+    """
 
-#     return result_list
-    
+    result : list[Polygon] = []
+
+    radiues = [1,0.75,0.5]
+    ys = [0,0.25,0.5]
+
+    for reversed in [1,-1]:
+        for z in range(2):
+            vertices : list[vec3d] = []
+            links : list[VertexLink]  = []
+            i : int = 0
+            for vertex in range(0, 32):
+                angle  = float(vertex) * 1.0 * numpy.pi / 32
+                points : list[float] = [numpy.cos(angle)*radiues[z+1], numpy.sin(angle)*1]
+                points1 : list[float] = [numpy.cos(angle)*radiues[z], numpy.sin(angle)*1.5]
+
+                vertices.append(vec3d(points[0],ys[z+1]*reversed,points[1],1.0))
+                vertices.append(vec3d(points1[0],ys[z]*reversed,points1[1],1.0))
+                links.append(VertexLink([i % (32*2),(i+1) % (32*2),
+                (i+3) % (32*2),(i+2) % (32*2)],[RGBA.pick_random_color()]))
+                i+=2
+            result.append(Polygon(vertices,links))
+    return result
+
+    return Polygon([
+        vec3d(0.75, 0.75, -0.75, 1.0),
+        vec3d(-0.35, 0.75, -0.35, 1.0),
+        vec3d(-0.35, 0.75, 0.35, 1.0),
+        vec3d(0.35, 0.75, 0.35, 1.0),
+        vec3d(0.75, -0.75, 0.75, 1.0),
+        vec3d(-0.75, -0.75, 0.75, 1.0),
+        vec3d(-0.75, -0.75, -0.75, 1.0),
+        vec3d(0.75, -0.75, -0.75, 1.0)
+    ],
+        [
+        VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
+        VertexLink([3, 2, 5, 4], [RGBA.pick_random_color()]),
+    ]
+    )

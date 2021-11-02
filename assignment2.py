@@ -4,7 +4,7 @@
 # November 2021
 
 
-from lib_arif.populator import CubePopulator, CyclinderPopulator, Populator
+from lib_arif.populator import CubePopulator, CyclinderPopulator, Populator, SpherePopulator
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -15,7 +15,7 @@ import sys
 isCyclinder = False
 isCube = False
 
-populators : list[Populator] = [CubePopulator(),CyclinderPopulator()]
+populators : list[Populator] = [CubePopulator(),CyclinderPopulator(),SpherePopulator()]
 selected_populator = 0
 window = 0
 
@@ -64,7 +64,7 @@ def keyPressed(key, x, y) -> None:
         populators[selected_populator].populate_up()
     elif value == 45:
         populators[selected_populator].populate_down()
-    elif value >=49 and value <=50:
+    elif value >=49 and value <=51:
         selected_populator = value - 49
     populators[selected_populator].translate_models()
 
@@ -92,6 +92,7 @@ print(
     "[/_\] Hit - decrease\n" +
     "[\_/] Hit 1 to select Cube\n"+
     "[/_\] Hit 2 to select Cyclinder\n"+
+    "[\_/] Hit 3 to select Sphere\n"+
     "------------------------------------------------"
 )
 main()

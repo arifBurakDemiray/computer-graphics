@@ -3,7 +3,7 @@
 # StudentId: 250201022
 # November 2021
 
-from .factory import create_cube,create_sub_level_cyclinder,create_sub_level_cubes
+from .factory import create_cube,create_sub_level_cyclinder,create_sub_level_cubes, create_sphere
 from .polygon import Polygon
 from .vec3d import vec3d
 from OpenGL.GL import *
@@ -127,3 +127,49 @@ class CyclinderPopulator(Populator):
                 glVertex3f(vertices[rope.links[i]].x,
                         vertices[rope.links[i]].y, vertices[rope.links[i]].z)
         glEnd()
+
+class SpherePopulator(Populator):
+
+    parts: int = 4
+    radius: float = 1.0
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.models = [create_sphere(self.level,self.parts,self.radius)]
+        self.translator = vec3d(1.5, 0.0, -7.0, 1.0)
+
+    def populate_up(self) -> None:
+        self.level+=1
+
+        self.parts = self.parts*2
+
+        self.models.append(create_sphere(self.level,self.parts,self.radius))
+
+
+    def populate_down(self) -> None:
+        if(self.level == 0):
+            return
+        self.parts=int(self.parts/2)
+       
+        self.models.remove(self.models[-1])
+
+        self.level-=1
+    
+    def draw(self) -> None:
+        for model in self.models:
+            if(model.level == self.level):
+                self.__DrawSphere(model)
+
+    def __DrawSphere(self,model: Polygon):
+        glLoadIdentity()
+        glBegin(GL_TRIANGLES)
+        vertices = model.vertices_to_vectors()
+
+        for rope in model.vertex_links:
+            rgb = rope.colors[0]
+            glColor3f(rgb.r, rgb.b, rgb.g) #draw color for each face
+            for i in range(len(rope.links)):
+                glVertex3f(vertices[rope.links[i]].x,
+                        vertices[rope.links[i]].y, vertices[rope.links[i]].z)
+        glEnd()
+
