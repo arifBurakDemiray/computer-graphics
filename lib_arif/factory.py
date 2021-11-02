@@ -3,7 +3,6 @@
 # StudentId: 250201022
 # November 2021
 
-from numpy.lib.type_check import real
 from .polygon import Polygon
 from .vec3d import vec3d
 from .vertex_color import RGBA, VertexLink
@@ -32,19 +31,31 @@ def create_triangle() -> Polygon:
         VertexLink([0, 4, 1], [RGBA(1, 0, 0), RGBA(0, 0, 1), RGBA(0, 1, 0)])
     ])
 
-
 def create_sub_level_cyclinder(parts: int, radius: float, level: int = 0) -> Polygon:
+    """
+    Creates sub level cyclinders by given parts and radius
+
+    Parameters:
+
+    parts is how many subdivisions occurs
+    radius is radius of the cyclinder
+    level is level of the model
+
+    Returns:
+
+    Creates cyclinder    
+    """
     vertices : list[vec3d] = []
     links : list[VertexLink]  = []
     link_circle : list[int] = []
     i : int = 0
 
-    for vertex in range(0, parts):
-        angle  = float(vertex) * 1.0 * numpy.pi / parts
+    for y in range(parts):
+        angle  = float(y) * 1.0 * numpy.pi / parts #calculate part degree
         points : list[float] = [numpy.cos(angle)*radius, numpy.sin(angle)*radius]
-        link_circle.append(i)
-        vertices.append(vec3d(points[0],2,points[1],1.0))
-        vertices.append(vec3d(points[0],-2,points[1],1.0))
+        link_circle.append(i) #for the upper circle
+        vertices.append(vec3d(points[0],2,points[1],1.0))  #upper points of the cyclinder
+        vertices.append(vec3d(points[0],-2,points[1],1.0)) #down points of the cyclinder
         links.append(VertexLink([i % (parts*2),(i+1) % (parts*2),
         (i+3) % (parts*2),(i+2) % (parts*2)],[RGBA.pick_random_color()]))
         i+=2
