@@ -1,10 +1,10 @@
-# CENG 487 Assignment1 by
+# CENG 487 Assignment2 by
 # Arif Burak Demiray
 # StudentId: 250201022
-# October 2021
+# November 2021
 
 import numpy as np
-from helper import degree_to_radian, radian_to_degree
+from .helper import degree_to_radian, radian_to_degree
 
 
 class vec3d:

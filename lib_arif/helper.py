@@ -1,7 +1,7 @@
-# CENG 487 Assignment1 by
+# CENG 487 Assignment2 by
 # Arif Burak Demiray
 # StudentId: 250201022
-# October 2021
+# November 2021
 
 from numpy import pi
 

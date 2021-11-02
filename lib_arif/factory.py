@@ -1,11 +1,12 @@
-# CENG 487 Assignment1 by
+# CENG 487 Assignment2 by
 # Arif Burak Demiray
 # StudentId: 250201022
-# October 2021
+# November 2021
 
-from polygon import Polygon
-from vec3d import vec3d
-from vertex_color import RGBA, VertexLink
+from .polygon import Polygon
+from .vec3d import vec3d
+from .vertex_color import RGBA, VertexLink
+import numpy
 
 
 def create_triangle() -> Polygon:
@@ -29,6 +30,25 @@ def create_triangle() -> Polygon:
         VertexLink([0, 3, 4], [RGBA(1, 0, 0), RGBA(0, 1, 0), RGBA(0, 0, 1)]),
         VertexLink([0, 4, 1], [RGBA(1, 0, 0), RGBA(0, 0, 1), RGBA(0, 1, 0)])
     ])
+
+
+def create_sub_level_cyclinder(parts: int, radius: float, level: int = 0) -> Polygon:
+    vertices : list[vec3d] = []
+    links : list[VertexLink]  = []
+
+    i : int = 0
+
+    for vertex in range(0, parts):
+        angle  = float(vertex) * 1.0 * numpy.pi / parts
+        points : list[float] = [numpy.cos(angle)*radius, numpy.sin(angle)*radius]
+
+        vertices.append(vec3d(points[0],2,points[1],1.0))
+        vertices.append(vec3d(points[0],-2,points[1],1.0))
+        links.append(VertexLink([i % (parts*2),(i+1) % (parts*2),
+        (i+3) % (parts*2),(i+2) % (parts*2)],[RGBA.pick_random_color()]))
+        i+=2
+
+    return Polygon(vertices,links,level)
 
 def create_cube() -> Polygon:
     """

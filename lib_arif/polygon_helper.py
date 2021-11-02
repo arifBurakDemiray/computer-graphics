@@ -1,10 +1,10 @@
-# CENG 487 Assignment1 by
+# CENG 487 Assignment2 by
 # Arif Burak Demiray
 # StudentId: 250201022
-# October 2021
+# November 2021
 
-from vec3d import vec3d
-from mat3d import mat3d
+from .vec3d import vec3d
+from .mat3d import mat3d
 
 
 def vectors_to_matrices(vectors: list[vec3d]) -> mat3d:

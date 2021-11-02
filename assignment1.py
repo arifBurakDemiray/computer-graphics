@@ -3,9 +3,9 @@
 # StudentId: 250201022
 # October 2021
 
-from factory import create_cube, create_triangle
-from polygon import Polygon
-from vec3d import vec3d
+from lib_arif.factory import create_cube, create_triangle
+from lib_arif.polygon import Polygon
+from lib_arif.vec3d import vec3d
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
