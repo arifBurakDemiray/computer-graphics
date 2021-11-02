@@ -8,6 +8,7 @@ from .polygon import Polygon
 from .vec3d import vec3d
 from OpenGL.GL import *
 
+#populator base class
 class Populator:
 
     models: list[Polygon]
@@ -38,7 +39,7 @@ class Populator:
 
 class CubePopulator(Populator):
 
-    factor: float = 1.0
+    factor: float = 1.0   #for the division translation factor
 
     def __init__(self) -> None:
         super().__init__()
@@ -52,16 +53,16 @@ class CubePopulator(Populator):
         for model in self.models:
             if(model != None and model.level+1==self.level):
                 sub_models.extend(create_sub_level_cubes(self.level,model,self.factor))
-        self.factor=self.factor/2
+        self.factor=self.factor/2   #reduce factor
         self.models.extend(sub_models)
 
     def populate_down(self) -> None:
         if(self.level == 0):
             return
         self.factor=self.factor*2
-        last_comers = 8**self.level
+        last_comers = 8**self.level  #8 because 8 subdivision
 
-        for i in range(last_comers):
+        for i in range(last_comers): #remove last added models
             self.models.remove(self.models[-1])
 
         self.level-=1
@@ -86,7 +87,7 @@ class CubePopulator(Populator):
 
 class CyclinderPopulator(Populator):
 
-    parts: int = 8
+    parts: int = 8  #initial part count
     radius: float = 1.0
 
     def __init__(self) -> None:
@@ -98,7 +99,7 @@ class CyclinderPopulator(Populator):
         self.level+=1
 
         self.parts = self.parts*2
-        
+        #just create and add
         self.models.append(create_sub_level_cyclinder(self.parts,self.radius,self.level))
 
     def populate_down(self) -> None:

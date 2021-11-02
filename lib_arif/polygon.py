@@ -21,8 +21,6 @@ class Polygon:
     level: int
 
     def __init__(self, vertices: list[vec3d], vertex_links: list[VertexLink], level: int = 0) -> None:
-        #TODO make type checker
-
         if(vertices != None):
             self.vertices = vectors_to_matrices(vertices)
         self.matrix_stack = []
