@@ -35,19 +35,19 @@ def create_triangle() -> Polygon:
 def create_sub_level_cyclinder(parts: int, radius: float, level: int = 0) -> Polygon:
     vertices : list[vec3d] = []
     links : list[VertexLink]  = []
-
+    link_circle : list[int] = []
     i : int = 0
 
     for vertex in range(0, parts):
         angle  = float(vertex) * 1.0 * numpy.pi / parts
         points : list[float] = [numpy.cos(angle)*radius, numpy.sin(angle)*radius]
-
+        link_circle.append(i)
         vertices.append(vec3d(points[0],2,points[1],1.0))
         vertices.append(vec3d(points[0],-2,points[1],1.0))
         links.append(VertexLink([i % (parts*2),(i+1) % (parts*2),
         (i+3) % (parts*2),(i+2) % (parts*2)],[RGBA.pick_random_color()]))
         i+=2
-
+    links.append(VertexLink(link_circle,[RGBA.pick_random_color()]))
     return Polygon(vertices,links,level)
 
 def create_cube() -> Polygon:
