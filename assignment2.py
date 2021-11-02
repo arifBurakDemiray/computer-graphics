@@ -15,8 +15,9 @@ import sys
 isCyclinder = False
 isCube = False
 
+#Populators, responsible for populating sub divisions of the objects
 populators : list[Populator] = [CubePopulator(),CyclinderPopulator(),SpherePopulator()]
-selected_populator = 0
+selected_populator = 0 #selected populator index
 window = 0
 
 def InitGL(Width: float, Height: float) -> None:
@@ -44,12 +45,10 @@ def ReSizeGLScene(Width: float, Height: float) -> None:
     glMatrixMode(GL_MODELVIEW)
 
 
-
-
 def DrawGLScene() -> None:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    populators[selected_populator].draw()
+    populators[selected_populator].draw() #selected populator's draw method
 
     glutSwapBuffers()
 
@@ -64,7 +63,7 @@ def keyPressed(key, x, y) -> None:
         populators[selected_populator].populate_up()
     elif value == 45:
         populators[selected_populator].populate_down()
-    elif value >=49 and value <=51:
+    elif value >=49 and value <=51: # only 1 2 3
         selected_populator = value - 49
     populators[selected_populator].translate_models()
 
