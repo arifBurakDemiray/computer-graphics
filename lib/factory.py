@@ -139,10 +139,7 @@ def create_sub_level_polygons(level: int, parent: Polygon, factor: float) -> lis
     if(parent.level != level-1):
         return None
 
-    first_sub: Polygon = parent.create_hard_copy(level, [
-        VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
-        VertexLink([3, 2, 5, 4], [RGBA.pick_random_color()]),
-    ])
+    first_sub: Polygon = parent.create_hard_copy(level, parent.vertex_links)
     first_sub.scale(0.5)  # scale it with 1/2
 
     translation: Vec3d = Vec3d(
@@ -166,10 +163,7 @@ def create_sub_level_polygons(level: int, parent: Polygon, factor: float) -> lis
     result_list = [first_sub]
 
     for sub_vector in sub_vectors:
-        temp: Polygon = first_sub.create_hard_copy(level, [
-            VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
-            VertexLink([3, 2, 5, 4], [RGBA.pick_random_color()]),
-        ])
+        temp: Polygon = first_sub.create_hard_copy(level, parent.vertex_links)
         temp.translate(sub_vector.x, sub_vector.y, sub_vector.z)
         result_list.append(temp)
 

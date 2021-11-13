@@ -224,6 +224,20 @@ class Vec3d:
         """
         return self.multiply(1/self.calc_length())
 
+    def calc_mid_point(self, vector: 'Vec3d') -> 'Vec3d':
+        """
+        This function calculates middle point of the two vectors
+
+        Parameters:
+
+        Second vector that's mid point calculates
+
+        Returns:
+
+        Middle point between them
+        """
+        return self.add(vector).multiply(0.5)
+
     def __check_homo_index(self, vector: 'Vec3d') -> float:
         """
         Checks whether they have same homogenous value or not
