@@ -1,8 +1,8 @@
 
 
-from lib_arif.polygon import Polygon
-from lib_arif.vec3d import Vec3d
-from lib_arif.vertex_color import RGBA, VertexLink
+from lib.polygon import Polygon
+from lib.vec3d import Vec3d
+from lib.vertex_color import RGBA, VertexLink
 
 
 class Parser:
