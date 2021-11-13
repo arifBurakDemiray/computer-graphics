@@ -4,7 +4,7 @@
 # November 2021
 
 from .polygon import Polygon
-from .vec3d import vec3d
+from .vec3d import Vec3d
 from .vertex_color import RGBA, VertexLink
 import numpy
 
@@ -18,11 +18,11 @@ def create_triangle() -> Polygon:
     A triangle polygon
     """
     return Polygon([
-        vec3d(0.0, 1.0, 0.0, 1.0),
-        vec3d(-1.0, -1.0, 1.0, 1.0),
-        vec3d(1.0, -1.0, 1.0, 1.0),
-        vec3d(1.0, -1.0, -1.0, 1.0),
-        vec3d(-1.0, -1.0, -1.0, 1.0)
+        Vec3d(0.0, 1.0, 0.0, 1.0),
+        Vec3d(-1.0, -1.0, 1.0, 1.0),
+        Vec3d(1.0, -1.0, 1.0, 1.0),
+        Vec3d(1.0, -1.0, -1.0, 1.0),
+        Vec3d(-1.0, -1.0, -1.0, 1.0)
     ],
         [
         VertexLink([0, 1, 2], [RGBA(1, 0, 0), RGBA(0, 1, 0), RGBA(0, 0, 1)]),
@@ -46,7 +46,7 @@ def create_sub_level_cyclinder(parts: int, radius: float, level: int = 0) -> Pol
 
     Creates cyclinder    
     """
-    vertices: list[vec3d] = []
+    vertices: list[Vec3d] = []
     links: list[VertexLink] = []
     link_circle: list[int] = []
     i: int = 0
@@ -57,9 +57,9 @@ def create_sub_level_cyclinder(parts: int, radius: float, level: int = 0) -> Pol
             numpy.cos(angle)*radius, numpy.sin(angle)*radius]
         link_circle.append(i)  # for the upper circle
         # upper points of the cyclinder
-        vertices.append(vec3d(points[0], 2, points[1], 1.0))
+        vertices.append(Vec3d(points[0], 2, points[1], 1.0))
         # down points of the cyclinder
-        vertices.append(vec3d(points[0], -2, points[1], 1.0))
+        vertices.append(Vec3d(points[0], -2, points[1], 1.0))
         links.append(VertexLink([i % (parts*2), (i+1) % (parts*2),
                                  (i+3) % (parts*2), (i+2) % (parts*2)], [RGBA.pick_random_color()]))
         i += 2
@@ -76,14 +76,14 @@ def create_cube() -> Polygon:
     A cube polygon
     """
     return Polygon([
-        vec3d(1.0, 1.0, -1.0, 1.0),
-        vec3d(-1.0, 1.0, -1.0, 1.0),
-        vec3d(-1.0, 1.0, 1.0, 1.0),
-        vec3d(1.0, 1.0, 1.0, 1.0),
-        vec3d(1.0, -1.0, 1.0, 1.0),
-        vec3d(-1.0, -1.0, 1.0, 1.0),
-        vec3d(-1.0, -1.0, -1.0, 1.0),
-        vec3d(1.0, -1.0, -1.0, 1.0)
+        Vec3d(1.0, 1.0, -1.0, 1.0),
+        Vec3d(-1.0, 1.0, -1.0, 1.0),
+        Vec3d(-1.0, 1.0, 1.0, 1.0),
+        Vec3d(1.0, 1.0, 1.0, 1.0),
+        Vec3d(1.0, -1.0, 1.0, 1.0),
+        Vec3d(-1.0, -1.0, 1.0, 1.0),
+        Vec3d(-1.0, -1.0, -1.0, 1.0),
+        Vec3d(1.0, -1.0, -1.0, 1.0)
     ],
         [
         VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
@@ -103,22 +103,22 @@ def create_sub_level_cubes(level: int, parent: Polygon, factor: float) -> list[P
     ])
     first_sub.scale(0.5)  # scale it with 1/2
 
-    translation: vec3d = vec3d(
+    translation: Vec3d = Vec3d(
         parent.vertices.content[20], parent.vertices.content[21], parent.vertices.content[22], 1.0).subtract(
-            vec3d(first_sub.vertices.content[20], first_sub.vertices.content[21], first_sub.vertices.content[22], 1.0))
+            Vec3d(first_sub.vertices.content[20], first_sub.vertices.content[21], first_sub.vertices.content[22], 1.0))
 
     # move it to the start of the left down cube location
     first_sub.translate(translation.x, translation.y, translation.z)
 
     # and prepare its translation matrices
-    sub_vectors: list[vec3d] = [
-        vec3d(factor, 0.0, 0.0, 1.0),
-        vec3d(0.0, factor, 0.0, 1.0),
-        vec3d(0.0, 0.0, factor, 1.0),
-        vec3d(factor, factor, 0.0, 1.0),
-        vec3d(factor, 0.0, factor, 1.0),
-        vec3d(0.0, factor, factor, 1.0),
-        vec3d(factor, factor, factor, 1.0)
+    sub_vectors: list[Vec3d] = [
+        Vec3d(factor, 0.0, 0.0, 1.0),
+        Vec3d(0.0, factor, 0.0, 1.0),
+        Vec3d(0.0, 0.0, factor, 1.0),
+        Vec3d(factor, factor, 0.0, 1.0),
+        Vec3d(factor, 0.0, factor, 1.0),
+        Vec3d(0.0, factor, factor, 1.0),
+        Vec3d(factor, factor, factor, 1.0)
     ]
 
     result_list = [first_sub]
@@ -134,11 +134,52 @@ def create_sub_level_cubes(level: int, parent: Polygon, factor: float) -> list[P
     return result_list
 
 
-def parametric_equation(x, y, r) -> vec3d:
+def create_sub_level_polygons(level: int, parent: Polygon, factor: float) -> list[Polygon]:
+
+    if(parent.level != level-1):
+        return None
+
+    first_sub: Polygon = parent.create_hard_copy(level, [
+        VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
+        VertexLink([3, 2, 5, 4], [RGBA.pick_random_color()]),
+    ])
+    first_sub.scale(0.5)  # scale it with 1/2
+
+    translation: Vec3d = Vec3d(
+        parent.vertices.content[20], parent.vertices.content[21], parent.vertices.content[22], 1.0).subtract(
+            Vec3d(first_sub.vertices.content[20], first_sub.vertices.content[21], first_sub.vertices.content[22], 1.0))
+
+    # move it to the start of the left down cube location
+    first_sub.translate(translation.x, translation.y, translation.z)
+
+    # and prepare its translation matrices
+    sub_vectors: list[Vec3d] = [
+        Vec3d(factor, 0.0, 0.0, 1.0),
+        Vec3d(0.0, factor, 0.0, 1.0),
+        Vec3d(0.0, 0.0, factor, 1.0),
+        Vec3d(factor, factor, 0.0, 1.0),
+        Vec3d(factor, 0.0, factor, 1.0),
+        Vec3d(0.0, factor, factor, 1.0),
+        Vec3d(factor, factor, factor, 1.0)
+    ]
+
+    result_list = [first_sub]
+
+    for sub_vector in sub_vectors:
+        temp: Polygon = first_sub.create_hard_copy(level, [
+            VertexLink([2, 1, 6, 5], [RGBA.pick_random_color()]),
+            VertexLink([3, 2, 5, 4], [RGBA.pick_random_color()]),
+        ])
+        temp.translate(sub_vector.x, sub_vector.y, sub_vector.z)
+        result_list.append(temp)
+
+    return result_list
+
+def parametric_equation(x, y, r) -> Vec3d:
     """
     Sphere parametric equation
     """
-    return vec3d(r*numpy.cos(x)*numpy.sin(y), r*numpy.cos(y), r*numpy.sin(x)*numpy.sin(y), 1.0)
+    return Vec3d(r*numpy.cos(x)*numpy.sin(y), r*numpy.cos(y), r*numpy.sin(x)*numpy.sin(y), 1.0)
 
 
 def create_sphere(level: int, factor: int, radius: float) -> Polygon:
@@ -150,7 +191,7 @@ def create_sphere(level: int, factor: int, radius: float) -> Polygon:
         factor  # how many parts there will be
     part_y = (end_degree_y-start_degree_y)/factor
 
-    vertices: list[vec3d] = []
+    vertices: list[Vec3d] = []
     links: list[VertexLink] = []
 
     for i in range(factor):  # part for the x plane triangles
