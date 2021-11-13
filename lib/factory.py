@@ -6,6 +6,7 @@
 from .polygon import Polygon
 from .vec3d import Vec3d
 from .vertex_color import RGBA, VertexLink
+from .polygon_helper import vectors_to_matrices
 import numpy
 
 
@@ -134,40 +135,37 @@ def create_sub_level_cubes(level: int, parent: Polygon, factor: float) -> list[P
     return result_list
 
 
-def create_sub_level_polygons(level: int, parent: Polygon, factor: float) -> list[Polygon]:
+def create_sub_level_polygon(level: int, parent: Polygon) -> None:
 
     if(parent.level != level-1):
         return None
 
-    first_sub: Polygon = parent.create_hard_copy(level, parent.vertex_links)
-    first_sub.scale(0.5)  # scale it with 1/2
+    parent.level = level
 
-    translation: Vec3d = Vec3d(
-        parent.vertices.content[20], parent.vertices.content[21], parent.vertices.content[22], 1.0).subtract(
-            Vec3d(first_sub.vertices.content[20], first_sub.vertices.content[21], first_sub.vertices.content[22], 1.0))
+    for face in parent.vertex_links:
+        if(face.level == level-1):
+            vertices = parent.vertices_to_vectors()
 
-    # move it to the start of the left down cube location
-    first_sub.translate(translation.x, translation.y, translation.z)
+            mid1 = vertices[face.links[0]].calc_mid_point(vertices[face.links[1]])
+            mid2 = vertices[face.links[1]].calc_mid_point(vertices[face.links[2]])
+            mid3 = vertices[face.links[2]].calc_mid_point(vertices[face.links[3]])
+            mid4 = vertices[face.links[3]].calc_mid_point(vertices[face.links[0]])
 
-    # and prepare its translation matrices
-    sub_vectors: list[Vec3d] = [
-        Vec3d(factor, 0.0, 0.0, 1.0),
-        Vec3d(0.0, factor, 0.0, 1.0),
-        Vec3d(0.0, 0.0, factor, 1.0),
-        Vec3d(factor, factor, 0.0, 1.0),
-        Vec3d(factor, 0.0, factor, 1.0),
-        Vec3d(0.0, factor, factor, 1.0),
-        Vec3d(factor, factor, factor, 1.0)
-    ]
+            vertices.extend([mid1,mid2,mid3,mid4])
+            leng = len(vertices)
+            parent.vertices = vectors_to_matrices(vertices)
+            parent.vertex_links.append(
+                VertexLink([face.links[0],leng-4,leng-2,face.links[3]],[RGBA(1,1,1)],level))
+            parent.vertex_links.append(
+                VertexLink([face.links[0],face.links[1],leng-3,leng-1],[RGBA(1,1,1)],level))
+            parent.vertex_links.append(
+                VertexLink([leng-1,leng-3,face.links[2],face.links[3]],[RGBA(1,1,1)],level))
+            parent.vertex_links.append(
+                VertexLink([leng-4,face.links[1],face.links[2],leng-2],[RGBA(1,1,1)],level))
 
-    result_list = [first_sub]
 
-    for sub_vector in sub_vectors:
-        temp: Polygon = first_sub.create_hard_copy(level, parent.vertex_links)
-        temp.translate(sub_vector.x, sub_vector.y, sub_vector.z)
-        result_list.append(temp)
 
-    return result_list
+    return parent
 
 def parametric_equation(x, y, r) -> Vec3d:
     """

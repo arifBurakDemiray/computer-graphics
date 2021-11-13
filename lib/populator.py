@@ -6,7 +6,7 @@
 from OpenGL.raw.GLU import gluOrtho2D
 from OpenGL.raw.GLUT import glutBitmapCharacter
 from numpy import character
-from .factory import create_cube,create_sub_level_cyclinder,create_sub_level_cubes, create_sphere, create_sub_level_polygons
+from .factory import create_cube,create_sub_level_cyclinder,create_sub_level_cubes, create_sphere, create_sub_level_polygon
 from .polygon import Polygon
 from .vec3d import Vec3d
 from OpenGL.GL import *
@@ -199,36 +199,32 @@ class QuadPopulator(Populator):
 
     def populate_up(self) -> None:
         self.level+=1
-        sub_models : list[Polygon] = []
 
-        for model in self.models:
-            if(model != None and model.level+1==self.level):
-                sub_models.extend(create_sub_level_polygons(self.level,model,self.factor))
-        self.factor=self.factor/2   #reduce factor
-        self.models.extend(sub_models)
+        flag = True
+        for face in self.models[0].vertex_links:
+            if(face.level == self.level):
+                flag = False
+                break
+
+        if(flag):
+            create_sub_level_polygon(self.level,self.models[0])
+
+
 
     def populate_down(self) -> None:
         if(self.level == 0):
             return
-        self.factor=self.factor*2
-        last_comers = 8**self.level  #8 because 8 subdivision
-
-        for i in range(last_comers): #remove last added models
-            self.models.remove(self.models[-1])
 
         self.level-=1
     
     def draw(self) -> None:        
-        for model in self.models:
-            if(model.level == self.level):
-                self.__DrawQuad(model)
-
-    def __DrawQuad(self,model: Polygon):
         glLoadIdentity()
         
-        vertices = model.vertices_to_vectors()
+        vertices = self.models[0].vertices_to_vectors()
 
-        for rope in model.vertex_links:
+        for rope in self.models[0].vertex_links:
+            if(rope.level != self.level):
+                continue
             rgb = rope.colors[0]
             glBegin(GL_LINE_LOOP)
             glColor3f(rgb.r, rgb.b, rgb.g) #draw color for each face
@@ -239,7 +235,6 @@ class QuadPopulator(Populator):
 
         glColor3f( 1,1,1 )
         glWindowPos2d(20, 20)
-        st : list[character] = "Level: "+str(model.level)
+        st : list[character] = "Level: "+str(self.level)
         for i in range(len(st)):
             glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ord(st[i]))
-        

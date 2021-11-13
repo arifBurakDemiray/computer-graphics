@@ -30,7 +30,9 @@ class VertexLink:
     """
     links: list[int]
     colors: list[RGBA]
+    level: int
 
-    def __init__(self, links: list[int], colors: list[RGBA]) -> None:
+    def __init__(self, links: list[int], colors: list[RGBA], level : int = 0) -> None:
         self.links = links
         self.colors = colors
+        self.level = level
