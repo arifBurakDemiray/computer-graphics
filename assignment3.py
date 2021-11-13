@@ -4,8 +4,8 @@
 # November 2021
 
 
-from lib_arif.obj_parser import QuadParser
-from lib_arif.populator import QuadPopulator, Populator
+from lib.obj_parser import QuadParser
+from lib.populator import QuadPopulator, Populator
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *

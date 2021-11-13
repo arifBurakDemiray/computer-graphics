@@ -4,7 +4,7 @@
 # November 2021
 
 
-from lib_arif.populator import CubePopulator, CyclinderPopulator, Populator, SpherePopulator
+from lib.populator import CubePopulator, CyclinderPopulator, Populator, SpherePopulator
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
