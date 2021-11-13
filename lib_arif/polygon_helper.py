@@ -3,11 +3,11 @@
 # StudentId: 250201022
 # November 2021
 
-from .vec3d import vec3d
-from .mat3d import mat3d
+from .vec3d import Vec3d
+from .mat3d import Mat3d
 
 
-def vectors_to_matrices(vectors: list[vec3d]) -> mat3d:
+def vectors_to_matrices(vectors: list[Vec3d]) -> Mat3d:
     """
     This function converts list of vertices to mat3d instance
 
@@ -31,4 +31,4 @@ def vectors_to_matrices(vectors: list[vec3d]) -> mat3d:
 
     content.extend([0, 0, 0, 1])  # for the homogeneous coordinates
 
-    return mat3d(content)
+    return Mat3d(content)

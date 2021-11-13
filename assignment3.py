@@ -4,7 +4,8 @@
 # November 2021
 
 
-from lib_arif.populator import CubePopulator, CyclinderPopulator, Populator, SpherePopulator
+from lib_arif.obj_parser import QuadParser
+from lib_arif.populator import QuadPopulator, Populator
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -14,10 +15,11 @@ import sys
 # translation vectors for the models
 isCyclinder = False
 isCube = False
+parser = QuadParser(sys.argv[1])
 
+obj = parser.parse()
 #Populators, responsible for populating sub divisions of the objects
-populators : list[Populator] = [CubePopulator(),CyclinderPopulator(),SpherePopulator()]
-selected_populator = 0 #selected populator index
+populator : Populator = QuadPopulator(obj)
 window = 0
 
 def InitGL(Width: float, Height: float) -> None:
@@ -48,29 +50,26 @@ def ReSizeGLScene(Width: float, Height: float) -> None:
 def DrawGLScene() -> None:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    populators[selected_populator].draw() #selected populator's draw method
+    populator.draw() #selected populator's draw method
 
     glutSwapBuffers()
 
 
 def keyPressed(key, x, y) -> None:
-    global selected_populator
-    populators[selected_populator].untranslate_models()
+    populator.untranslate_models()
     value = ord(key)
     if value == 27:  # Esc leave
         glutLeaveMainLoop()
     elif value == 43:
-        populators[selected_populator].populate_up()
+        populator.populate_up()
     elif value == 45:
-        populators[selected_populator].populate_down()
-    elif value >=49 and value <=51: # only 1 2 3
-        selected_populator = value - 49
-    populators[selected_populator].translate_models()
+        populator.populate_down()
+    populator.translate_models()
 
 
 def main() -> None:
     global window
-    populators[selected_populator].translate_models()
+    populator.translate_models()
     glutInit(sys.argv)
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
     glutInitWindowSize(640, 480)
@@ -94,4 +93,5 @@ print(
     "[\_/] Hit 3 to select Sphere\n"+
     "------------------------------------------------"
 )
+
 main()

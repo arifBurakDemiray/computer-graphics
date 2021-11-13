@@ -7,7 +7,7 @@ import numpy as np
 from .helper import degree_to_radian, radian_to_degree
 
 
-class vec3d:
+class Vec3d:
     """
     A vector class implemented for 3d
     """
@@ -32,7 +32,7 @@ class vec3d:
         """
         return self.x*self.y*self.z*self.w
 
-    def calc_dot(self, vector: 'vec3d') -> float:
+    def calc_dot(self, vector: 'Vec3d') -> float:
         """
         Calculates dot product of 2 3d vectors by formula
         A = [a,b,c]  B = [x,y,z] 
@@ -50,7 +50,7 @@ class vec3d:
         """
         return (self.x*vector.x) + (self.y*vector.y) + (self.z*vector.z)
 
-    def calc_angle_between(self, vector: 'vec3d') -> float:
+    def calc_angle_between(self, vector: 'Vec3d') -> float:
         """
         Calculates angle between two vectors by formula
         A = [a,b,c]  B = [x,y,z] 
@@ -86,7 +86,7 @@ class vec3d:
         """
         return np.sqrt(self.calc_dot(self))
 
-    def add(self, vector: 'vec3d') -> 'vec3d':
+    def add(self, vector: 'Vec3d') -> 'Vec3d':
         """
         Adds to vectors and returns a new vector
 
@@ -98,9 +98,9 @@ class vec3d:
 
         New vec3d object vector is added to the caller object
         """
-        return vec3d(self.x+vector.x, self.y+vector.y,self.z+vector.z, self.__check_homo_index(vector))
+        return Vec3d(self.x+vector.x, self.y+vector.y,self.z+vector.z, self.__check_homo_index(vector))
 
-    def multiply(self, constant: float) -> 'vec3d':
+    def multiply(self, constant: float) -> 'Vec3d':
         """
         Multiplies all values of a vector by a given constant
 
@@ -112,9 +112,9 @@ class vec3d:
 
         A new vec3d object multiplied by the constant
         """
-        return vec3d(self.x*constant, self.y*constant, self.z*constant, self.w)
+        return Vec3d(self.x*constant, self.y*constant, self.z*constant, self.w)
 
-    def subtract(self, vector: 'vec3d') -> 'vec3d':
+    def subtract(self, vector: 'Vec3d') -> 'Vec3d':
         """
         Subtracts two vectors. vector parameter is subtracted from caller object
 
@@ -126,9 +126,9 @@ class vec3d:
 
         A new vec3d object
         """
-        return vec3d(self.x-vector.x, self.y-vector.y, self.z-vector.z, self.__check_homo_index(vector))
+        return Vec3d(self.x-vector.x, self.y-vector.y, self.z-vector.z, self.__check_homo_index(vector))
 
-    def calc_cross(self, vector: 'vec3d') -> 'vec3d':
+    def calc_cross(self, vector: 'Vec3d') -> 'Vec3d':
         """
         Calculate cross product of two vectors by formula 
 
@@ -144,14 +144,14 @@ class vec3d:
 
         A new vec3d object
         """
-        return vec3d(
+        return Vec3d(
             self.y*vector.z - self.z*vector.y,
             self.z*vector.x - self.x*vector.z,
             self.x*vector.y - self.y*vector.x,
             self.__check_homo_index(vector)
         )
 
-    def calc_projection(self, vector: 'vec3d') -> 'vec3d':
+    def calc_projection(self, vector: 'Vec3d') -> 'Vec3d':
         """
         Calculates projection vector of vector onto caller vector by the formula
 
@@ -175,7 +175,7 @@ class vec3d:
 
         return vector.multiply(constant)
 
-    def calc_triple_cross(self, vector1: 'vec3d', vector2: 'vec3d') -> 'vec3d':
+    def calc_triple_cross(self, vector1: 'Vec3d', vector2: 'Vec3d') -> 'Vec3d':
         """
         Calculates triple cross product of 3 vectors by the formula
 
@@ -194,7 +194,7 @@ class vec3d:
         """
         return vector1.multiply(self.calc_dot(vector2)).subtract(vector2.multiply(self.calc_dot(vector1)))
 
-    def calc_triple_scalar(self, vector1: 'vec3d', vector2: 'vec3d') -> float:
+    def calc_triple_scalar(self, vector1: 'Vec3d', vector2: 'Vec3d') -> float:
         """
         Calculates triple scalar product of 3 vectors by the formula
 
@@ -214,7 +214,7 @@ class vec3d:
         """
         return self.calc_dot(vector1.calc_cross(vector2))
 
-    def calc_normalize(self) -> 'vec3d':
+    def calc_normalize(self) -> 'Vec3d':
         """
         This function calculates normalized vector of caller vector
 
@@ -224,7 +224,7 @@ class vec3d:
         """
         return self.multiply(1/self.calc_length())
 
-    def __check_homo_index(self, vector: 'vec3d') -> float:
+    def __check_homo_index(self, vector: 'Vec3d') -> float:
         """
         Checks whether they have same homogenous value or not
 

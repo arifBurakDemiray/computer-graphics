@@ -3,7 +3,7 @@
 # StudentId: 250201022
 # November 2021
 
-from .vec3d import vec3d
+from .vec3d import Vec3d
 import numpy as np
 from .helper import degree_to_radian
 
@@ -13,15 +13,15 @@ class Pair:
     This class is for response object from transformation functions
     It holds both result of transformation and transformation matrix
     """
-    transformer: 'mat3d'
-    transformed: 'mat3d'
+    transformer: 'Mat3d'
+    transformed: 'Mat3d'
 
-    def __init__(self, transformer: 'mat3d', transformed: 'mat3d') -> 'Pair':
+    def __init__(self, transformer: 'Mat3d', transformed: 'Mat3d') -> 'Pair':
         self.transformer = transformer
         self.transformed = transformed
 
 
-class mat3d:
+class Mat3d:
     """
     This class holds a 4x4 matrix
 
@@ -34,10 +34,10 @@ class mat3d:
     """
     content: list[float]
 
-    def __init__(self, content: list[float]) -> 'mat3d':
+    def __init__(self, content: list[float]) -> 'Mat3d':
         self.content = content
 
-    def calc_transpose(self) -> 'mat3d':
+    def calc_transpose(self) -> 'Mat3d':
         """
         This function calculates transpose of the caller mat3d object
 
@@ -52,9 +52,9 @@ class mat3d:
             for y in range(4):
                 value.append(self.content[y*4 + i])
 
-        return mat3d(value)
+        return Mat3d(value)
 
-    def calc_inverse(self) -> 'mat3d':
+    def calc_inverse(self) -> 'Mat3d':
         """
         This function calculates inverse of a matrix that has 4 column
 
@@ -70,9 +70,9 @@ class mat3d:
                 self.content[i*4 + 2],
                 self.content[i*4 + 3]])
         inversed = np.linalg.inv(dimensional)
-        return mat3d(inversed.flatten())
+        return Mat3d(inversed.flatten())
 
-    def calc_multiplacation(self, matrix: 'mat3d') -> 'mat3d':
+    def calc_multiplacation(self, matrix: 'Mat3d') -> 'Mat3d':
         """
         Calculates multiplacation of two matrices that have 4 columns second matrix should be 4x4 
         it start multiplacation with caller mat3d
@@ -95,7 +95,7 @@ class mat3d:
                     total += self.content[z*4+y]*matrix.content[y*4 + i]
                 value.append(total)
 
-        return mat3d(value)
+        return Mat3d(value)
 
     def calc_scale(self, constant: float) -> Pair:
         """
@@ -114,7 +114,7 @@ class mat3d:
 
         return Pair(matrix, self.calc_multiplacation(matrix))
 
-    def calc_translation(self, vector: vec3d) -> Pair:
+    def calc_translation(self, vector: Vec3d) -> Pair:
         """
         This function calculates translation of mat3d matrix by given vec3d vector
 
@@ -198,7 +198,7 @@ class mat3d:
 
         return Pair(matrix, self.calc_multiplacation(matrix))
 
-    def create_rotation_matrix(self, degree: float) -> 'mat3d':
+    def create_rotation_matrix(self, degree: float) -> 'Mat3d':
         """
         This function creates rotation matrix in order of X,Y and Z
 
@@ -216,7 +216,7 @@ class mat3d:
 
         return matris_xyz
 
-    def create_rotation_matrix_z(self, degree: float) -> 'mat3d':
+    def create_rotation_matrix_z(self, degree: float) -> 'Mat3d':
         """
         This function creates rotation matrix for z axis
 
@@ -230,14 +230,14 @@ class mat3d:
         """
         rad = degree_to_radian(degree)
 
-        return mat3d([
+        return Mat3d([
             np.cos(rad), -np.sin(rad), 0, 0,
             np.sin(rad), np.cos(rad), 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1
         ])
 
-    def create_rotation_matrix_y(self, degree: float) -> 'mat3d':
+    def create_rotation_matrix_y(self, degree: float) -> 'Mat3d':
         """
         This function creates rotation matrix for y axis
 
@@ -251,14 +251,14 @@ class mat3d:
         """
         rad = degree_to_radian(degree)
 
-        return mat3d([
+        return Mat3d([
             np.cos(rad), 0, np.sin(rad), 0,
             0, 1, 0, 0,
             -np.sin(rad), 0, np.cos(rad), 0,
             0, 0, 0, 1
         ])
 
-    def create_rotation_matrix_x(self, degree: float) -> 'mat3d':
+    def create_rotation_matrix_x(self, degree: float) -> 'Mat3d':
         """
         This function creates rotation matrix for x axis
 
@@ -272,14 +272,14 @@ class mat3d:
         """
         rad = degree_to_radian(degree)
 
-        return mat3d([
+        return Mat3d([
             1, 0, 0, 0,
             0, np.cos(rad), -np.sin(rad), 0,
             0, np.sin(rad), np.cos(rad), 0,
             0, 0, 0, 1
         ])
 
-    def create_translation_matrix(self, vector: vec3d) -> 'mat3d':
+    def create_translation_matrix(self, vector: Vec3d) -> 'Mat3d':
         """
         This function creates translation matrix by given vec3d object
 
@@ -291,22 +291,22 @@ class mat3d:
 
         Translation matrix
         """
-        return mat3d([
+        return Mat3d([
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
             vector.x, vector.y, vector.z, 1
         ])
 
-    def create_shear_matrix(self, xy: float, yx: float, xz: float, zx: float, yz: float, zy: float) -> 'mat3d':
-        return mat3d([
+    def create_shear_matrix(self, xy: float, yx: float, xz: float, zx: float, yz: float, zy: float) -> 'Mat3d':
+        return Mat3d([
             1, yx, zx, 0,
             xy, 1, zy, 0,
             xz, yz, 1, 0,
             0, 0, 0, 1
         ])
 
-    def create_scale_matrix(self, constant: float) -> 'mat3d':
+    def create_scale_matrix(self, constant: float) -> 'Mat3d':
         """
         This function creates scale matrix for given constant
 
@@ -318,7 +318,7 @@ class mat3d:
 
         Scale matrix for constant value
         """
-        return mat3d(
+        return Mat3d(
             [constant, 0, 0, 0,
              0, constant, 0, 0,
              0, 0, constant, 0,

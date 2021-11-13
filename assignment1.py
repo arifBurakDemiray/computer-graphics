@@ -5,7 +5,7 @@
 
 from lib_arif.factory import create_cube, create_triangle
 from lib_arif.polygon import Polygon
-from lib_arif.vec3d import vec3d
+from lib_arif.vec3d import Vec3d
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -13,8 +13,8 @@ import time
 import sys
 
 # translation vectors for the models
-cube_translator = vec3d(1.5, 0.0, -7.0, 1.0)
-triangle_translator = vec3d(-1.5, 0.0, -6.0, 1.0)
+cube_translator = Vec3d(1.5, 0.0, -7.0, 1.0)
+triangle_translator = Vec3d(-1.5, 0.0, -6.0, 1.0)
 
 # create models
 triangle = create_triangle()

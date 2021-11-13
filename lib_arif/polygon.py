@@ -3,8 +3,8 @@
 # StudentId: 250201022
 # November 2021
 
-from .vec3d import vec3d
-from .mat3d import mat3d
+from .vec3d import Vec3d
+from .mat3d import Mat3d
 from .polygon_helper import vectors_to_matrices
 from .vertex_color import RGBA, VertexLink
 
@@ -15,19 +15,19 @@ class Polygon:
 
     its vertices, links and transformation matrix stack
     """
-    vertices: mat3d
-    matrix_stack: list[mat3d]
+    vertices: Mat3d
+    matrix_stack: list[Mat3d]
     vertex_links: list[VertexLink]
     level: int
 
-    def __init__(self, vertices: list[vec3d], vertex_links: list[VertexLink], level: int = 0) -> None:
+    def __init__(self, vertices: list[Vec3d], vertex_links: list[VertexLink], level: int = 0) -> None:
         if(vertices != None):
             self.vertices = vectors_to_matrices(vertices)
         self.matrix_stack = []
         self.vertex_links = vertex_links
         self.level = level
 
-    def transformate(self, matrix: mat3d) -> None:
+    def transformate(self, matrix: Mat3d) -> None:
         """
         This function transformates caller polygon by given matrix and saves matrix to matrix stack
 
@@ -46,17 +46,17 @@ class Polygon:
 
         X,Y and Z coordinate of the translation point
         """
-        vector = vec3d(x, y, z, 1.0)
+        vector = Vec3d(x, y, z, 1.0)
         result = self.vertices.calc_translation(vector)
 
         self.vertices = result.transformed
         #self.matrix_stack.append(result.transformer)
 
-    def set_vertices(self,vertices: mat3d) -> 'Polygon':
+    def set_vertices(self,vertices: Mat3d) -> 'Polygon':
         self.vertices = vertices
         return self
 
-    def plane_translate(self, inverse: int, vector: vec3d) -> None:
+    def plane_translate(self, inverse: int, vector: Vec3d) -> None:
         """
         This function translates caller polygon by given vector
         but does not saves translation matrix to matrix stack
@@ -68,7 +68,7 @@ class Polygon:
             otherwise translates it by reversed version of the vector
         """
 
-        temp_vector: vec3d
+        temp_vector: Vec3d
 
         if(inverse == 0):
             temp_vector = vector
@@ -106,13 +106,13 @@ class Polygon:
         self.vertices = result.transformed
         #self.matrix_stack.append(result.transformer)
 
-    def scale_and_return(self,constant: float) -> list[vec3d]:
+    def scale_and_return(self,constant: float) -> list[Vec3d]:
         resultt = self.vertices.calc_scale(constant)
         result = []
 
         for i in range(int(len(resultt.transformed.content)/4) - 1):  # do not get last row
             result.append(
-                vec3d(
+                Vec3d(
                     resultt.transformed.content[i*4],
                     resultt.transformed.content[i*4+1],
                     resultt.transformed.content[i*4+2],
@@ -172,7 +172,7 @@ class Polygon:
         self.vertices = self.vertices.calc_multiplacation(
             last_matrix.calc_inverse())
 
-    def vertices_to_vectors(self) -> list[vec3d]:
+    def vertices_to_vectors(self) -> list[Vec3d]:
         """
         This function converts mat3d object of vertices to list vec3d
 
@@ -184,7 +184,7 @@ class Polygon:
 
         for i in range(int(len(self.vertices.content)/4) - 1):  # do not get last row
             result.append(
-                vec3d(
+                Vec3d(
                     self.vertices.content[i*4],
                     self.vertices.content[i*4+1],
                     self.vertices.content[i*4+2],
