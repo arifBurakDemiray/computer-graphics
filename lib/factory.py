@@ -136,6 +136,13 @@ def create_sub_level_cubes(level: int, parent: Polygon, factor: float) -> list[P
 
 
 def create_sub_level_polygon(level: int, parent: Polygon) -> None:
+    """
+    Creates sub levels of a quad polygon and adds it to the vertices of it
+
+    Parameters:
+
+    Created level and parent polygon
+    """
 
     if(parent.level != level-1):
         return
@@ -145,14 +152,14 @@ def create_sub_level_polygon(level: int, parent: Polygon) -> None:
     for face in parent.vertex_links:
         if(face.level == level-1):
             vertices = parent.vertices_to_vectors()
-
+            #calculate mid points of faces in a row
             mid1 = vertices[face.links[0]].calc_mid_point(vertices[face.links[1]])
             mid2 = vertices[face.links[1]].calc_mid_point(vertices[face.links[2]])
             mid3 = vertices[face.links[2]].calc_mid_point(vertices[face.links[3]])
             mid4 = vertices[face.links[3]].calc_mid_point(vertices[face.links[0]])
 
             vertices.extend([mid1,mid2,mid3,mid4])
-            leng = len(vertices)
+            leng = len(vertices)        #than add vertices and links of them
             parent.vertices = vectors_to_matrices(vertices)
             parent.vertex_links.append(
                 VertexLink([face.links[0],leng-4,leng-2,face.links[3]],[RGBA(1,1,1)],level))

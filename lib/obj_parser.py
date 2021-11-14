@@ -19,6 +19,9 @@ class Parser:
         pass
 
 class QuadParser(Parser):
+    """
+    This class parses quad objects
+    """
 
     def __init__(self,file_name : str) -> None:
         super().__init__(file_name)
@@ -40,7 +43,7 @@ class QuadParser(Parser):
         for line in file:
             if(len(line)<1):
                 continue
-            if(line[0]=="v"):
+            if(line[0]=="v"):  #if vertex add vertices
                 vertices.append(self.__parse_vertex(line))
             elif(line[0]=="f"):
                 links.append(self.__parse_link(line))

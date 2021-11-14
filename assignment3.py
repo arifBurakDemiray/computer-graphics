@@ -11,7 +11,7 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import sys
 
-populator : Populator
+populator : Populator  #populator
 
 def InitGL(Width: float, Height: float) -> None:
     glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -41,7 +41,7 @@ def ReSizeGLScene(Width: float, Height: float) -> None:
 def DrawGLScene() -> None:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    populator.draw() #selected populator's draw method
+    populator.draw() #populator's draw method
 
     glutSwapBuffers()
 
@@ -51,15 +51,15 @@ def keyPressed(key, x, y) -> None:
     value = ord(key)
     if value == 27:  # Esc leave
         glutLeaveMainLoop()
-    elif value == 43:
+    elif value == 43: #+ subdive
         populator.populate_up()
-    elif value == 45:
+    elif value == 45: #- subdivide
         populator.populate_down()
     elif(value == 8):  # Backspace undo
         populator.models[0].undo()
-    elif(value == 42): # 
+    elif(value == 42): #* rotate z positive 
         populator.models[0].rotate_z(5)
-    elif(value == 47):
+    elif(value == 47): #/ rotate z negative
         populator.models[0].rotate_z(-5)
     elif(value == 115): #S save
         export_as_obj(populator.models[0],sys.argv[1])
@@ -71,13 +71,13 @@ def arrowsPressed(key, x, y) -> None:
         populator.models[0].rotate_y(-5)
     elif key == GLUT_KEY_RIGHT: #right
         populator.models[0].rotate_y(5)
-    elif key == GLUT_KEY_UP:
+    elif key == GLUT_KEY_UP: #up
         populator.models[0].rotate_x(5)
-    elif key == GLUT_KEY_DOWN:
+    elif key == GLUT_KEY_DOWN: #down
         populator.models[0].rotate_x(-5)
-    elif key == GLUT_KEY_PAGE_UP:
+    elif key == GLUT_KEY_PAGE_UP: #zoom in
         populator.models[0].scale(2)
-    elif key == GLUT_KEY_PAGE_DOWN:
+    elif key == GLUT_KEY_PAGE_DOWN: #zoom out
         populator.models[0].scale(0.5)
     populator.translate_models()
 
@@ -117,23 +117,21 @@ def InitFunctions() -> None:
     glutKeyboardFunc(keyPressed)
     glutSpecialFunc(arrowsPressed)
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) #blending for alpha color channel
     
 def main() -> None:
     global populator
-    parser = QuadParser(sys.argv[1])
-    obj = parser.parse()
-    populator = QuadPopulator(obj)
+    parser = QuadParser(sys.argv[1])  #read file name
+    obj = parser.parse()  #parse it
+    populator = QuadPopulator(obj) #and create populator o it
 
-    print_menu()
+    print_menu()  #print menu to console
     
-    populator.translate_models()
+    populator.translate_models()  #translate to visible area
     
-
+    #init gls
     InitScreen()
-
     InitFunctions()
-
     InitGL(640, 480)
     glutMainLoop()
     
