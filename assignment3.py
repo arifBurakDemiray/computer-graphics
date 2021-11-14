@@ -106,6 +106,7 @@ def InitScreen() -> None:
     glutInitWindowSize(640, 480)
     glutInitWindowPosition(0, 0)
     glutCreateWindow("CENG487 Assignment 3")
+    glEnable(GL_BLEND)
 
 def InitFunctions() -> None:
     glutDisplayFunc(DrawGLScene)
@@ -116,6 +117,8 @@ def InitFunctions() -> None:
     glutKeyboardFunc(keyPressed)
     glutSpecialFunc(arrowsPressed)
 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    
 def main() -> None:
     global populator
     parser = QuadParser(sys.argv[1])
@@ -126,10 +129,11 @@ def main() -> None:
     
     populator.translate_models()
     
+
     InitScreen()
 
     InitFunctions()
-    
+
     InitGL(640, 480)
     glutMainLoop()
     

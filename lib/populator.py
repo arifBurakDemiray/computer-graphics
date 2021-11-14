@@ -185,8 +185,6 @@ class SpherePopulator(Populator):
 
 class QuadPopulator(Populator):
 
-    factor: float = 1.0   #for the division translation factor
-
     def __init__(self) -> None:
         super().__init__()
         self.models = [create_cube()]
@@ -209,8 +207,6 @@ class QuadPopulator(Populator):
         if(flag):
             create_sub_level_polygon(self.level,self.models[0])
 
-
-
     def populate_down(self) -> None:
         if(self.level == 0):
             return
@@ -228,6 +224,12 @@ class QuadPopulator(Populator):
             rgb = rope.colors[0]
             glBegin(GL_LINE_LOOP)
             glColor3f(rgb.r, rgb.b, rgb.g) #draw color for each face
+            for i in range(len(rope.links)):
+                glVertex3f(vertices[rope.links[i]].x,
+                        vertices[rope.links[i]].y, vertices[rope.links[i]].z)
+            glEnd()
+            glBegin(GL_QUADS)
+            glColor4f(0.1,0.1,0.1,0.7) #draw color for each face
             for i in range(len(rope.links)):
                 glVertex3f(vertices[rope.links[i]].x,
                         vertices[rope.links[i]].y, vertices[rope.links[i]].z)
