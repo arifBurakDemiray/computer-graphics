@@ -11,12 +11,7 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import sys
 
-parser = QuadParser(sys.argv[1])
-
-obj = parser.parse()
-#Populators, responsible for populating sub divisions of the objects
-populator : Populator = QuadPopulator(obj)
-window = 0
+populator : Populator
 
 def InitGL(Width: float, Height: float) -> None:
     glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -85,24 +80,8 @@ def arrowsPressed(key, x, y) -> None:
     populator.translate_models()
 
 
-def main() -> None:
-    global window
-    populator.translate_models()
-    glutInit(sys.argv)
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-    glutInitWindowSize(640, 480)
-    glutInitWindowPosition(0, 0)
-    window = glutCreateWindow("CENG487 Assignment 3")
-    glutDisplayFunc(DrawGLScene)
-    glutIdleFunc(DrawGLScene)
-    glutReshapeFunc(ReSizeGLScene)
-    glutKeyboardFunc(keyPressed)
-    glutSpecialFunc(arrowsPressed)
-    InitGL(640, 480)
-    glutMainLoop()
-
-
-print(
+def print_menu() -> None:
+    print(
     "------------------------------------------------\n" +
     "[/_\] Hit ESC key to quit\n" +
     "[\_/] Hit + to increase subdivide\n" +
@@ -116,8 +95,41 @@ print(
     "[\_/] Hit BACKSPACE to Undo\n"+
     "[/_\] Hit PAGE UP to zoom in\n"+
     "[\_/] Hit PAGE DOWN to zoom out\n"+
-    "------------------------------------------------"
-)
+    "------------------------------------------------")
+
+def InitScreen() -> None:
+    glutInit(sys.argv)
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
+    glutInitWindowSize(640, 480)
+    glutInitWindowPosition(0, 0)
+    glutCreateWindow("CENG487 Assignment 3")
+
+def InitFunctions() -> None:
+    glutDisplayFunc(DrawGLScene)
+    glutIdleFunc(DrawGLScene)
+    
+    glutReshapeFunc(ReSizeGLScene)
+    
+    glutKeyboardFunc(keyPressed)
+    glutSpecialFunc(arrowsPressed)
+
+def main() -> None:
+    global populator
+    parser = QuadParser(sys.argv[1])
+    obj = parser.parse()
+    populator = QuadPopulator(obj)
+
+    print_menu()
+    
+    populator.translate_models()
+    
+    InitScreen()
+
+    InitFunctions()
+    
+    InitGL(640, 480)
+    glutMainLoop()
+    
 
 if __name__ == '__main__':
     main()
