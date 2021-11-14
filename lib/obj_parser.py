@@ -1,4 +1,7 @@
-
+# CENG 487 Assignment3 by
+# Arif Burak Demiray
+# StudentId: 250201022
+# November 2021
 
 from lib.polygon import Polygon
 from lib.vec3d import Vec3d

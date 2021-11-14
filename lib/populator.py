@@ -1,9 +1,8 @@
-# CENG 487 Assignment2 by
+# CENG 487 Assignment3 by
 # Arif Burak Demiray
 # StudentId: 250201022
 # November 2021
 
-from OpenGL.raw.GLU import gluOrtho2D
 from OpenGL.raw.GLUT import glutBitmapCharacter
 from numpy import character
 from .factory import create_cube,create_sub_level_cyclinder,create_sub_level_cubes, create_sphere, create_sub_level_polygon
