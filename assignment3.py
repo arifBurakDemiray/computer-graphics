@@ -3,7 +3,7 @@
 # StudentId: 250201022
 # November 2021
 
-
+from lib.exporter import export_as_obj
 from lib.obj_parser import QuadParser
 from lib.populator import QuadPopulator, Populator
 from OpenGL.GL import *
@@ -57,10 +57,12 @@ def keyPressed(key, x, y) -> None:
         populator.populate_down()
     elif(value == 8):  # Backspace undo
         populator.models[0].undo()
-    elif(value == 42):
+    elif(value == 42): # 
         populator.models[0].rotate_z(5)
     elif(value == 47):
         populator.models[0].rotate_z(-5)
+    elif(value == 115): #S save
+        export_as_obj(populator.models[0],sys.argv[1])
     populator.translate_models()
 
 def arrowsPressed(key, x, y) -> None:
@@ -95,6 +97,7 @@ def print_menu() -> None:
     "[\_/] Hit BACKSPACE to Undo\n"+
     "[/_\] Hit PAGE UP to zoom in\n"+
     "[\_/] Hit PAGE DOWN to zoom out\n"+
+    "[/_\] Hit S export as obj file\n"+
     "------------------------------------------------")
 
 def InitScreen() -> None:

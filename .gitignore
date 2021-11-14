@@ -132,3 +132,5 @@ dmypy.json
 01-HelloOpenGL.py
 notes.txt
 HomeworkFiles
+
+*.obj

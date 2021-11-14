@@ -138,7 +138,7 @@ def create_sub_level_cubes(level: int, parent: Polygon, factor: float) -> list[P
 def create_sub_level_polygon(level: int, parent: Polygon) -> None:
 
     if(parent.level != level-1):
-        return None
+        return
 
     parent.level = level
 
@@ -162,10 +162,6 @@ def create_sub_level_polygon(level: int, parent: Polygon) -> None:
                 VertexLink([leng-1,leng-3,face.links[2],face.links[3]],[RGBA(1,1,1)],level))
             parent.vertex_links.append(
                 VertexLink([leng-4,face.links[1],face.links[2],leng-2],[RGBA(1,1,1)],level))
-
-
-
-    return parent
 
 def parametric_equation(x, y, r) -> Vec3d:
     """
