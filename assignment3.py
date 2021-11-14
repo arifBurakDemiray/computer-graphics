@@ -68,9 +68,9 @@ def keyPressed(key, x, y) -> None:
 def arrowsPressed(key, x, y) -> None:
     populator.untranslate_models()
     if key == GLUT_KEY_LEFT: #left
-        populator.models[0].rotate_y(-5)
-    elif key == GLUT_KEY_RIGHT: #right
         populator.models[0].rotate_y(5)
+    elif key == GLUT_KEY_RIGHT: #right
+        populator.models[0].rotate_y(-5)
     elif key == GLUT_KEY_UP: #up
         populator.models[0].rotate_x(5)
     elif key == GLUT_KEY_DOWN: #down
