@@ -11,10 +11,6 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import sys
 
-
-# translation vectors for the models
-isCyclinder = False
-isCube = False
 parser = QuadParser(sys.argv[1])
 
 obj = parser.parse()
@@ -64,6 +60,28 @@ def keyPressed(key, x, y) -> None:
         populator.populate_up()
     elif value == 45:
         populator.populate_down()
+    elif(value == 8):  # Backspace undo
+        populator.models[0].undo()
+    elif(value == 42):
+        populator.models[0].rotate_z(5)
+    elif(value == 47):
+        populator.models[0].rotate_z(-5)
+    populator.translate_models()
+
+def arrowsPressed(key, x, y) -> None:
+    populator.untranslate_models()
+    if key == GLUT_KEY_LEFT: #left
+        populator.models[0].rotate_y(-5)
+    elif key == GLUT_KEY_RIGHT: #right
+        populator.models[0].rotate_y(5)
+    elif key == GLUT_KEY_UP:
+        populator.models[0].rotate_x(5)
+    elif key == GLUT_KEY_DOWN:
+        populator.models[0].rotate_x(-5)
+    elif key == GLUT_KEY_PAGE_UP:
+        populator.models[0].scale(2)
+    elif key == GLUT_KEY_PAGE_DOWN:
+        populator.models[0].scale(0.5)
     populator.translate_models()
 
 
@@ -74,11 +92,12 @@ def main() -> None:
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
     glutInitWindowSize(640, 480)
     glutInitWindowPosition(0, 0)
-    window = glutCreateWindow("CENG487 Assignment 2")
+    window = glutCreateWindow("CENG487 Assignment 3")
     glutDisplayFunc(DrawGLScene)
     glutIdleFunc(DrawGLScene)
     glutReshapeFunc(ReSizeGLScene)
     glutKeyboardFunc(keyPressed)
+    glutSpecialFunc(arrowsPressed)
     InitGL(640, 480)
     glutMainLoop()
 
@@ -86,12 +105,19 @@ def main() -> None:
 print(
     "------------------------------------------------\n" +
     "[/_\] Hit ESC key to quit\n" +
-    "[\_/] Hit + increase\n" +
-    "[/_\] Hit - decrease\n" +
-    "[\_/] Hit 1 to select Cube\n"+
-    "[/_\] Hit 2 to select Cyclinder\n"+
-    "[\_/] Hit 3 to select Sphere\n"+
+    "[\_/] Hit + to increase subdivide\n" +
+    "[/_\] Hit - to decrease subdivide\n" +
+    "[\_/] Hit RIGHT Arrow Key to rotate right by y axis\n"+
+    "[/_\] Hit LEFT Arrow Key to rotate left by y axis\n"+
+    "[\_/] Hit UP Arrow Key to rotate up by x axis\n"+
+    "[/_\] Hit DOWN Arrow Key to rotate down by x axis\n"+
+    "[\_/] Hit * to rotate up by z axis\n"+
+    "[/_\] Hit / to rotate down by z axis\n"+
+    "[\_/] Hit BACKSPACE to Undo\n"+
+    "[/_\] Hit PAGE UP to zoom in\n"+
+    "[\_/] Hit PAGE DOWN to zoom out\n"+
     "------------------------------------------------"
 )
 
-main()
+if __name__ == '__main__':
+    main()

@@ -161,6 +161,45 @@ class Polygon:
         self.vertices = result
         self.matrix_stack.append(matrix)
 
+    def rotate_y(self, degree: float) -> None:
+        """
+        This function rotates polygon object by given degree
+
+        Parameters:
+
+        Degree to rotate
+        """
+        result = self.vertices.calc_rotation_y(degree)
+
+        self.vertices = result.transformed
+        self.matrix_stack.append(result.transformer)
+
+    def rotate_z(self, degree: float) -> None:
+        """
+        This function rotates polygon object by given degree
+
+        Parameters:
+
+        Degree to rotate
+        """
+        result = self.vertices.calc_rotation_z(degree)
+
+        self.vertices = result.transformed
+        self.matrix_stack.append(result.transformer)
+
+    def rotate_x(self, degree: float) -> None:
+        """
+        This function rotates polygon object by given degree
+
+        Parameters:
+
+        Degree to rotate
+        """
+        result = self.vertices.calc_rotation_x(degree)
+
+        self.vertices = result.transformed
+        self.matrix_stack.append(result.transformer)
+
     def undo(self) -> None:
         """
         This function undoes the last transformation done to the caller polygon
