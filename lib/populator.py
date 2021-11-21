@@ -14,7 +14,7 @@ from OpenGL.GLUT.fonts import GLUT_BITMAP_9_BY_15
 #populator base class
 class Populator:
 
-    models: list[Polygon]
+    models: 'list[Polygon]'
     translator: Vec3d
     level : int
 
@@ -56,7 +56,7 @@ class CubePopulator(Populator):
 
     def populate_up(self) -> None:
         self.level+=1
-        sub_models : list[Polygon] = []
+        sub_models : 'list[Polygon]' = []
 
         for model in self.models:
             if(model != None and model.level+1==self.level):
@@ -236,6 +236,6 @@ class QuadPopulator(Populator):
 
         glColor3f( 1,1,1 )
         glWindowPos2d(20, 20)
-        st : list[character] = "Level: "+str(self.level)
+        st : 'list[character]' = "Level: "+str(self.level)
         for i in range(len(st)):
             glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ord(st[i]))

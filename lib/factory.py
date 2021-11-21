@@ -47,14 +47,14 @@ def create_sub_level_cyclinder(parts: int, radius: float, level: int = 0) -> Pol
 
     Creates cyclinder    
     """
-    vertices: list[Vec3d] = []
-    links: list[VertexLink] = []
-    link_circle: list[int] = []
+    vertices: 'list[Vec3d]' = []
+    links: 'list[VertexLink]' = []
+    link_circle: 'list[int]' = []
     i: int = 0
 
     for y in range(parts):
         angle = float(y) * 1.0 * numpy.pi / parts  # calculate part degree
-        points: list[float] = [
+        points: 'list[float]' = [
             numpy.cos(angle)*radius, numpy.sin(angle)*radius]
         link_circle.append(i)  # for the upper circle
         # upper points of the cyclinder
@@ -93,7 +93,7 @@ def create_cube() -> Polygon:
     )
 
 
-def create_sub_level_cubes(level: int, parent: Polygon, factor: float) -> list[Polygon]:
+def create_sub_level_cubes(level: int, parent: Polygon, factor: float) -> 'list[Polygon]':
 
     if(parent.level != level-1):
         return None
@@ -112,7 +112,7 @@ def create_sub_level_cubes(level: int, parent: Polygon, factor: float) -> list[P
     first_sub.translate(translation.x, translation.y, translation.z)
 
     # and prepare its translation matrices
-    sub_vectors: list[Vec3d] = [
+    sub_vectors: 'list[Vec3d]' = [
         Vec3d(factor, 0.0, 0.0, 1.0),
         Vec3d(0.0, factor, 0.0, 1.0),
         Vec3d(0.0, 0.0, factor, 1.0),
@@ -186,8 +186,8 @@ def create_sphere(level: int, factor: int, radius: float) -> Polygon:
         factor  # how many parts there will be
     part_y = (end_degree_y-start_degree_y)/factor
 
-    vertices: list[Vec3d] = []
-    links: list[VertexLink] = []
+    vertices: 'list[Vec3d]' = []
+    links: 'list[VertexLink]' = []
 
     for i in range(factor):  # part for the x plane triangles
         for j in range(factor):  # part for the y plane triangles

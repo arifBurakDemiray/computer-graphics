@@ -32,9 +32,9 @@ class Mat3d:
 
     so in the matrix [x,y] is equal to width(row)*y + x in the array
     """
-    content: list[float]
+    content: 'list[float]'
 
-    def __init__(self, content: list[float]) -> 'Mat3d':
+    def __init__(self, content: 'list[float]') -> 'Mat3d':
         self.content = content
 
     def calc_transpose(self) -> 'Mat3d':

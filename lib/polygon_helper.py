@@ -7,7 +7,7 @@ from .vec3d import Vec3d
 from .mat3d import Mat3d
 
 
-def vectors_to_matrices(vectors: list[Vec3d]) -> Mat3d:
+def vectors_to_matrices(vectors: 'list[Vec3d]') -> Mat3d:
     """
     This function converts list of vertices to mat3d instance
 

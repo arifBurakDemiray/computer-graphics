@@ -121,6 +121,17 @@ def InitFunctions() -> None:
     
 def main() -> None:
     global populator
+
+    if(len(sys.argv)<2):
+        print("usage\n\tpython3 assigment3.py filename\n\tpython assigment3.py filename")
+        return
+    
+    splitted = sys.argv[1].split(".")[1]
+
+    if(splitted not in ["obj","OBJ"]):
+        print("\n\tplease provide an obj format file\n")
+        return
+
     parser = QuadParser(sys.argv[1])  #read file name
     obj = parser.parse()  #parse it
     populator = QuadPopulator(obj) #and create populator o it

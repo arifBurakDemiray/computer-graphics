@@ -27,16 +27,16 @@ class QuadParser(Parser):
         super().__init__(file_name)
 
     def __parse_vertex(self,line: str) -> Vec3d:
-        data : list[str] = line.split(" ")
+        data : 'list[str]' = line.split(" ")
         return Vec3d(float(data[1]),float(data[3]),float(data[2]),1)
     
     def __parse_link(self,line: str) -> VertexLink:
-        data : list[str] = line.split(" ")
+        data : 'list[str]' = line.split(" ")
         return VertexLink([int(data[1])-1,int(data[2])-1,int(data[3])-1,int(data[4])-1],[RGBA(1,1,1)])
 
     def parse(self) -> Polygon:
-        vertices : list[Vec3d] = []
-        links : list[VertexLink] = []
+        vertices : 'list[Vec3d]' = []
+        links : 'list[VertexLink]' = []
 
         file = open(self.file_name,"r")
 

@@ -16,11 +16,11 @@ class Polygon:
     its vertices, links and transformation matrix stack
     """
     vertices: Mat3d
-    matrix_stack: list[Mat3d]
-    vertex_links: list[VertexLink]
+    matrix_stack: 'list[Mat3d]'
+    vertex_links: 'list[VertexLink]'
     level: int
 
-    def __init__(self, vertices: list[Vec3d], vertex_links: list[VertexLink], level: int = 0) -> None:
+    def __init__(self, vertices: 'list[Vec3d]', vertex_links: 'list[VertexLink]', level: int = 0) -> None:
         if(vertices != None):
             self.vertices = vectors_to_matrices(vertices)
         self.matrix_stack = []
@@ -106,7 +106,7 @@ class Polygon:
         self.vertices = result.transformed
         #self.matrix_stack.append(result.transformer)
 
-    def scale_and_return(self,constant: float) -> list[Vec3d]:
+    def scale_and_return(self,constant: float) -> 'list[Vec3d]':
         resultt = self.vertices.calc_scale(constant)
         result = []
 
@@ -128,7 +128,7 @@ class Polygon:
         
         return self
 
-    def create_hard_copy(self,level: int, links: list[VertexLink] = None) -> 'Polygon':
+    def create_hard_copy(self,level: int, links: 'list[VertexLink]' = None) -> 'Polygon':
         
         link_vertex = links if links != None else self.vertex_links
 
@@ -211,7 +211,7 @@ class Polygon:
         self.vertices = self.vertices.calc_multiplacation(
             last_matrix.calc_inverse())
 
-    def vertices_to_vectors(self) -> list[Vec3d]:
+    def vertices_to_vectors(self) -> 'list[Vec3d]':
         """
         This function converts mat3d object of vertices to list vec3d
 
