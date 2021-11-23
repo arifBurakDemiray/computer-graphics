@@ -78,14 +78,13 @@ class CubePopulator(Populator):
     def __DrawCube(self,model: Polygon):
         glLoadIdentity()
         glBegin(GL_QUADS)
-        vertices = model.vertices_to_vectors()
 
         for rope in model.vertex_links:
             rgb = rope.colors[0]
             glColor3f(rgb.r, rgb.b, rgb.g) #draw color for each face
             for i in range(len(rope.links)):
-                glVertex3f(vertices[rope.links[i]].x,
-                        vertices[rope.links[i]].y, vertices[rope.links[i]].z)
+                point = model.get(rope.links[i])
+                glVertex3f(point.x,point.y,point.z)
         glEnd()
 
 class CyclinderPopulator(Populator):
@@ -210,7 +209,7 @@ class QuadPopulator(Populator):
     def draw(self) -> None:        
         glLoadIdentity()
         
-        vertices = self.models[0].vertices_to_vectors()
+        model = self.models[0]
 
         for rope in self.models[0].vertex_links:
             if(rope.level != self.level):
@@ -219,14 +218,14 @@ class QuadPopulator(Populator):
             glBegin(GL_LINE_LOOP)
             glColor3f(rgb.r, rgb.b, rgb.g) #draw color for each face
             for i in range(len(rope.links)):
-                glVertex3f(vertices[rope.links[i]].x,
-                        vertices[rope.links[i]].y, vertices[rope.links[i]].z)
+                point = model.get(rope.links[i])
+                glVertex3f(point.x,point.y, point.z)
             glEnd()
             glBegin(GL_QUADS)
             glColor4f(0.1,0.1,0.1,0.7) #draw color for each face
             for i in range(len(rope.links)):
-                glVertex3f(vertices[rope.links[i]].x,
-                        vertices[rope.links[i]].y, vertices[rope.links[i]].z)
+                point = model.get(rope.links[i])
+                glVertex3f(point.x,point.y, point.z)
             glEnd()
 
         glColor3f( 1,1,1 )

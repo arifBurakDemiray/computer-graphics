@@ -27,7 +27,10 @@ class Polygon:
         self.vertex_links = vertex_links
         self.level = level
 
-    
+    def get(self,index : int = 0) -> Vec3d:
+        multiplied = index*4
+        return Vec3d(self.vertices.content[multiplied], self.vertices.content[multiplied+1],
+        self.vertices.content[multiplied+2], self.vertices.content[multiplied+3])
 
     def transformate(self, matrix: Mat3d) -> None:
         """
