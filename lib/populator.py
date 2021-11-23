@@ -49,11 +49,6 @@ class CubePopulator(Populator):
         self.models = [create_cube()]
         self.translator = Vec3d(1.5, 0.0, -7.0, 1.0)
 
-    def __init__(self,obj : Polygon) -> None:
-        super().__init__()
-        self.models = [obj]
-        self.translator = Vec3d(1.5, 0.0, -7.0, 1.0)
-
     def populate_up(self) -> None:
         self.level+=1
         sub_models : 'list[Polygon]' = []

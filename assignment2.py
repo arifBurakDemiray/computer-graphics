@@ -16,7 +16,7 @@ isCyclinder = False
 isCube = False
 
 #Populators, responsible for populating sub divisions of the objects
-populators : list[Populator] = [CubePopulator(),CyclinderPopulator(),SpherePopulator()]
+populators : 'list[Populator]' = [CubePopulator(),CyclinderPopulator(),SpherePopulator()]
 selected_populator = 0 #selected populator index
 window = 0
 

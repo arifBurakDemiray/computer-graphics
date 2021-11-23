@@ -3,15 +3,17 @@
 # StudentId: 250201022
 # November 2021
 
-from lib.exporter import export_as_obj
 from lib.obj_parser import QuadParser
 from lib.populator import QuadPopulator, Populator
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+from lib.scene import *
 import sys
 
 populator : Populator  #populator
+
+scene : Scene = Scene()
 
 def InitGL(Width: float, Height: float) -> None:
     glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -41,45 +43,19 @@ def ReSizeGLScene(Width: float, Height: float) -> None:
 def DrawGLScene() -> None:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    populator.draw() #populator's draw method
+    scene.draw() #populator's draw method
 
     glutSwapBuffers()
 
 
 def keyPressed(key, x, y) -> None:
-    populator.untranslate_models()
     value = ord(key)
-    if value == 27:  # Esc leave
-        glutLeaveMainLoop()
-    elif value == 43: #+ subdive
-        populator.populate_up()
-    elif value == 45: #- subdivide
-        populator.populate_down()
-    elif(value == 8):  # Backspace undo
-        populator.models[0].undo()
-    elif(value == 42): #* rotate z positive 
-        populator.models[0].rotate_z(5)
-    elif(value == 47): #/ rotate z negative
-        populator.models[0].rotate_z(-5)
-    elif(value == 115): #S save
-        export_as_obj(populator.models[0],sys.argv[1])
-    populator.translate_models()
+    scene.process([value,sys.argv[1]])
+
 
 def arrowsPressed(key, x, y) -> None:
-    populator.untranslate_models()
-    if key == GLUT_KEY_LEFT: #left
-        populator.models[0].rotate_y(5)
-    elif key == GLUT_KEY_RIGHT: #right
-        populator.models[0].rotate_y(-5)
-    elif key == GLUT_KEY_UP: #up
-        populator.models[0].rotate_x(5)
-    elif key == GLUT_KEY_DOWN: #down
-        populator.models[0].rotate_x(-5)
-    elif key == GLUT_KEY_PAGE_UP: #zoom in
-        populator.models[0].scale(2)
-    elif key == GLUT_KEY_PAGE_DOWN: #zoom out
-        populator.models[0].scale(0.5)
-    populator.translate_models()
+
+    scene.process([key])
 
 
 def print_menu() -> None:
@@ -134,11 +110,12 @@ def main() -> None:
 
     parser = QuadParser(sys.argv[1])  #read file name
     obj = parser.parse()  #parse it
-    populator = QuadPopulator(obj) #and create populator o it
+
+    scene.subscribe(QuadPopulator(obj)) #and create populator o it
 
     print_menu()  #print menu to console
     
-    populator.translate_models()  #translate to visible area
+    scene.process("t")  #translate to visible area
     
     #init gls
     InitScreen()
