@@ -3,13 +3,13 @@
 # StudentId: 250201022
 # November 2021
 
-from OpenGL.raw.GLUT import glutBitmapCharacter
-from numpy import character
+
+
+from .glu_helper import gluPrintText
 from .factory import create_cube,create_sub_level_cyclinder,create_sub_level_cubes, create_sphere, create_sub_level_polygon
 from .polygon import Polygon
 from .vec3d import Vec3d
 from OpenGL.GL import *
-from OpenGL.GLUT.fonts import GLUT_BITMAP_9_BY_15
 
 #populator base class
 class Populator:
@@ -218,18 +218,13 @@ class QuadPopulator(Populator):
             glBegin(GL_LINE_LOOP)
             glColor3f(rgb.r, rgb.b, rgb.g) #draw color for each face
             for i in range(len(rope.links)):
-                point = model.get(rope.links[i])
-                glVertex3f(point.x,point.y, point.z)
+                glVertex4fv(model.get(rope.links[i]))
             glEnd()
             glBegin(GL_QUADS)
             glColor4f(0.1,0.1,0.1,0.7) #draw color for each face
             for i in range(len(rope.links)):
-                point = model.get(rope.links[i])
-                glVertex3f(point.x,point.y, point.z)
+                glVertex4fv(model.get(rope.links[i]))
             glEnd()
-
-        glColor3f( 1,1,1 )
-        glWindowPos2d(20, 20)
-        st : 'list[character]' = "Level: "+str(self.level)
-        for i in range(len(st)):
-            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ord(st[i]))
+        
+        gluPrintText("Level: "+str(self.level))
+        
