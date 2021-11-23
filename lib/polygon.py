@@ -27,6 +27,8 @@ class Polygon:
         self.vertex_links = vertex_links
         self.level = level
 
+    
+
     def transformate(self, matrix: Mat3d) -> None:
         """
         This function transformates caller polygon by given matrix and saves matrix to matrix stack
@@ -105,22 +107,7 @@ class Polygon:
         result = self.vertices.calc_scale(constant)
         self.vertices = result.transformed
         #self.matrix_stack.append(result.transformer)
-
-    def scale_and_return(self,constant: float) -> 'list[Vec3d]':
-        resultt = self.vertices.calc_scale(constant)
-        result = []
-
-        for i in range(int(len(resultt.transformed.content)/4) - 1):  # do not get last row
-            result.append(
-                Vec3d(
-                    resultt.transformed.content[i*4],
-                    resultt.transformed.content[i*4+1],
-                    resultt.transformed.content[i*4+2],
-                    resultt.transformed.content[i*4+3])
-            )
-
-        return result
-
+        
     def change_colors(self) -> 'Polygon':
         for link in self.vertex_links:
             for i in range(len(link.colors)):
