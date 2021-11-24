@@ -89,6 +89,7 @@ def print_menu() -> None:
     "[/_\] Hit PAGE UP to zoom in\n"+
     "[\_/] Hit PAGE DOWN to zoom out\n"+
     "[/_\] Hit S export as obj file\n"+
+    "[\_/] Use your mouse to move camera (it is in early stage)\n"+
     "------------------------------------------------")
 
 def InitScreen() -> None:
