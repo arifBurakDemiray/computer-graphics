@@ -2,9 +2,7 @@
 # Arif Burak Demiray
 # StudentId: 250201022
 # November 2021
-#https://learnopengl.com/Getting-started/Camera
 
-from OpenGL.raw.GLU import gluLookAt
 from .vec3d import Vec3d
 import numpy as np
 from .helper import degree_to_radian
@@ -27,6 +25,7 @@ class View:
         self.cameras.append(camera)
 
     def mouseMoved(self, xpos, ypos) -> None:
+        #https://learnopengl.com/Getting-started/Camera
         xoffset = xpos - self.cameras[self.selected].posX
         yoffset = self.cameras[self.selected].posY - ypos
         self.cameras[self.selected].posX = xpos
@@ -41,22 +40,22 @@ class View:
         elif(self.pitch<-89.0):
             self.pitch = -89.0
 
-        camDirection : Vec3d = Vec3d(
+        camPos : Vec3d = Vec3d(
             np.cos(degree_to_radian(self.yaw))*np.cos(degree_to_radian(self.pitch)),
             np.sin(degree_to_radian(self.pitch)),
             np.sin(degree_to_radian(self.yaw))*np.cos(degree_to_radian(self.pitch)),
             1
         )
 
-        zaxiz = camDirection.calc_normalize()
-        xaxis = Vec3d(0,1,0,1).calc_normalize().calc_cross(zaxiz)
+        zaxiz = camPos.calc_normalize()
+        xaxis = Vec3d(0,1,0,1).calc_normalize().calc_cross(zaxiz) #camera up vector
         yaxis = zaxiz.calc_cross(xaxis)
 
         self.cameras[self.selected].matrix = Mat3d(
             [xaxis.x,xaxis.y,xaxis.z,0,
             yaxis.x,yaxis.y,yaxis.z,0,
             zaxiz.x,zaxiz.y,zaxiz.z,0,
-            -1*camDirection.x,-1*camDirection.y,-1*camDirection.z,1]
+            -1*camPos.x,-1*camPos.y,-1*camPos.z,1]
         )
 
 class Camera:

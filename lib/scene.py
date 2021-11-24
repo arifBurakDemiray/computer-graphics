@@ -63,9 +63,9 @@ class Scene:
             populator.models[0].rotate_z(-5)
         elif(key == 115): #S save
             export_as_obj(populator.models[0],args[1])
-        elif(key == "t"):
+        elif(key == "t"): #translate
             populator.translate_models()
-        elif(key == "C"):
+        elif(key == "C"): #camera movement
             populator.models[0].project(args[1])
 
         populator.translate_models()

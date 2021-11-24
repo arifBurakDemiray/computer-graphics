@@ -9,6 +9,9 @@ from OpenGL.raw.GLUT import glutBitmapCharacter
 from numpy import character
 
 def gluPrintText(text: 'list[character]') -> None:
+    """
+    Helper method to print text to the screen
+    """
     glColor3f( 1,1,1 )
     glWindowPos2d(20, 20)
     for i in range(len(text)):

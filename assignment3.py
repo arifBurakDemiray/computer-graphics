@@ -60,18 +60,12 @@ def arrowsPressed(key, x, y) -> None:
 
     scene.process([key])
 
-counter = 0
 
 def mouseMoved(x,y) -> None:
-    global counter
-    if(counter==1):
-        counter = 0
 
-    if(counter == 0):
-        view.mouseMoved(x,y)
-        scene.process(["C",view.cameras[view.selected]])
-    
-    counter+=1
+    view.mouseMoved(x,y)
+    scene.process(["C",view.cameras[view.selected]])
+ 
 
 def print_menu() -> None:
     print(
