@@ -3,6 +3,7 @@
 # StudentId: 250201022
 # November 2021
 
+from lib.view import Camera
 from .vec3d import Vec3d
 from .mat3d import Mat3d
 from .polygon_helper import vectors_to_matrices
@@ -111,6 +112,19 @@ class Polygon:
         self.vertices = result.transformed
         #self.matrix_stack.append(result.transformer)
         
+
+    def project(self, camera: Camera) -> None:
+        """
+        This function scales caller polygon object
+
+        Parameters:
+
+        Scale constant
+        """
+
+        result = self.vertices.calc_multiplacation(camera.matrix)
+        self.vertices = result
+
     def change_colors(self) -> 'Polygon':
         for link in self.vertex_links:
             for i in range(len(link.colors)):

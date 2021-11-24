@@ -1,3 +1,8 @@
+# CENG 487 Assignment3 by
+# Arif Burak Demiray
+# StudentId: 250201022
+# November 2021
+
 from typing import Any
 from OpenGL.raw.GLUT.constants import *
 from OpenGL.GLUT.freeglut import glutLeaveMainLoop
@@ -60,5 +65,7 @@ class Scene:
             export_as_obj(populator.models[0],args[1])
         elif(key == "t"):
             populator.translate_models()
+        elif(key == "C"):
+            populator.models[0].project(args[1])
 
         populator.translate_models()

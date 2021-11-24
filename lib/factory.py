@@ -157,8 +157,8 @@ def create_sub_level_polygon(level: int, parent: Polygon) -> None:
             mid2 = vertices[face.links[1]].calc_mid_point(vertices[face.links[2]])
             mid3 = vertices[face.links[2]].calc_mid_point(vertices[face.links[3]])
             mid4 = vertices[face.links[3]].calc_mid_point(vertices[face.links[0]])
-
-            vertices.extend([mid1,mid2,mid3,mid4])
+            mid = mid1.calc_mid_point(mid3)
+            vertices.extend([mid,mid1,mid2,mid3,mid4])
             leng = len(vertices)        #than add vertices and links of them
             parent.vertices = vectors_to_matrices(vertices)
             parent.vertex_links.append(

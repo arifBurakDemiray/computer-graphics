@@ -11,9 +11,12 @@ from OpenGL.GLU import *
 from lib.scene import *
 import sys
 
+from lib.view import Camera, View
+
 populator : Populator  #populator
 
-scene : Scene = Scene()
+scene : Scene
+view : View
 
 def InitGL(Width: float, Height: float) -> None:
     glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -57,6 +60,18 @@ def arrowsPressed(key, x, y) -> None:
 
     scene.process([key])
 
+counter = 0
+
+def mouseMoved(x,y) -> None:
+    global counter
+    if(counter==1):
+        counter = 0
+
+    if(counter == 0):
+        view.mouseMoved(x,y)
+        scene.process(["C",view.cameras[view.selected]])
+    
+    counter+=1
 
 def print_menu() -> None:
     print(
@@ -93,10 +108,15 @@ def InitFunctions() -> None:
     glutKeyboardFunc(keyPressed)
     glutSpecialFunc(arrowsPressed)
 
+    glutPassiveMotionFunc(mouseMoved)
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) #blending for alpha color channel
     
 def main() -> None:
-    global populator
+    global populator,view,scene
+
+    scene = Scene()
+    view = View()
 
     if(len(sys.argv)<2):
         print("usage\n\tpython3 assigment3.py filename\n\tpython assigment3.py filename")
@@ -121,6 +141,7 @@ def main() -> None:
     InitScreen()
     InitFunctions()
     InitGL(640, 480)
+    view.subscribe(Camera(320,240))
     glutMainLoop()
     
 
