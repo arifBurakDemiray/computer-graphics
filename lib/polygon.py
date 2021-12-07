@@ -20,6 +20,10 @@ class Polygon:
     matrix_stack: 'list[Mat3d]'
     vertex_links: 'list[VertexLink]'
     level: int
+    edge_adjaceny: 'list[Edge]' = []
+    face_adjaceny: 'list[int]' = []
+    vertex_adjaceny: 'list[int]' = []
+
 
     def __init__(self, vertices: 'list[Vec3d]', vertex_links: 'list[VertexLink]', level: int = 0) -> None:
         if(vertices != None):
@@ -43,6 +47,18 @@ class Polygon:
         """
         self.matrix_stack.append(matrix)
         self.vertices = self.vertices.calc_multiplacation(matrix)
+
+    def with_edges(self,edges : 'list[Edge]') -> 'Polygon':
+        self.edge_adjaceny = edges
+        return self
+    
+    def with_vertices(self,vertices : 'list[int]') -> 'Polygon':
+        self.vertex_adjaceny = vertices
+        return self
+
+    def with_faces(self,faces : 'list[int]') -> 'Polygon':
+        self.face_adjaceny = faces
+        return self
 
     def translate(self, x: float, y: float, z: float) -> None:
         """
@@ -235,3 +251,28 @@ class Polygon:
             )
 
         return result
+
+class Edge:
+    vertices : 'list[int]'
+    faces : 'list[int]'
+    edges : 'list[int]'
+    edge_point : 'Vec3d' = Vec3d(0,0,0,1)
+    level : int = 0
+
+    def __init__(self,vertices : 'list[int]',faces : 'list[int]',edges : 'list[int]', level: int = 0) -> None:
+        self.vertices = vertices
+        self.faces = faces
+        self.edges = edges
+        self.level = level
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return (self.vertices[0]==other.vertices[0] and 
+            self.vertices[1]==other.vertices[1]) or (self.vertices[1]==other.vertices[0] and 
+            self.vertices[0]==other.vertices[1])
+        else:
+            return False
+    
+    def is_neighbour(self, edge: 'Edge') -> bool:
+        return self.vertices[0] in edge.vertices or self.vertices[1] in edge.vertices and self.level == edge.level
+
