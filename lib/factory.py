@@ -3,11 +3,12 @@
 # StudentId: 250201022
 # November 2021
 
-from .polygon import Polygon
+from .polygon import Edge, Polygon
 from .vec3d import Vec3d
 from .vertex_color import RGBA, VertexLink
 from .polygon_helper import vectors_to_matrices
 import numpy
+from .list_helper import  add_generic
 
 
 def create_triangle() -> Polygon:
@@ -169,6 +170,150 @@ def create_sub_level_polygon(level: int, parent: Polygon) -> None:
                 VertexLink([leng-1,leng-3,face.links[2],face.links[3]],[RGBA(1,1,1)],level))
             parent.vertex_links.append(
                 VertexLink([leng-4,face.links[1],face.links[2],leng-2],[RGBA(1,1,1)],level))
+
+
+def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
+
+    if(parent.level != level-1):
+        return
+
+    parent.level = level
+
+    vertices = parent.vertices_to_vectors()
+
+    for face in parent.vertex_links:
+        if(face.level == level-1):
+
+            face_point = Vec3d(0,0,0,1)
+            
+            for i in face.links:
+                face_point+=vertices[i]
+            face_point=face_point.multiply(1/4)
+            face.face_point = face_point
+    
+    for edge in parent.edge_adjaceny:
+        if(edge.level == level-1):
+            edge_point = Vec3d(0,0,0,1)
+            for face in edge.faces:
+                edge_point+=face.face_point
+            for vertex in edge.vertices:
+                edge_point+=vertices[vertex]
+            edge_point = edge_point.multiply(1/4)
+            edge.edge_point = edge_point
+
+    for i in range(len(vertices)):
+        faces = []
+        edges = []
+        edges.append(parent.vertex_adjaceny[i])
+        edge = parent.vertex_adjaceny[i]
+        faces.extend(edge.faces)
+        for edge in edge.edges:
+            if(i in edge.vertices):
+                add_generic(edges,edge)
+                for face in edge.faces:
+                    add_generic(faces,face)
+        if(len(faces) != 3 or len(edges)!= 3):
+            print("ERROR")
+        
+        F = Vec3d(0,0,0,1)
+        for face in faces:
+            F+=face.face_point
+        F = F.multiply(1/len(faces))
+
+        R = Vec3d(0,0,0,1)
+        for edge in edges:
+            R+=vertices[edge.vertices[0]].calc_mid_point(vertices[edge.vertices[1]])
+        R = R.multiply(1/len(edges))
+
+        vertices[i] = ((F+R.multiply(2)+vertices[i].multiply(len(faces)-3)).multiply(1/len(faces)))
+    
+    len_links = len(parent.vertex_links)
+
+    for face in range(len_links):
+        current_face = parent.vertex_links[face]
+        if(current_face.level == level-1):
+
+            
+
+            face_index = add_generic(vertices,current_face.face_point)
+
+            main_edge = parent.face_adjaceny[face]
+
+            if(main_edge.level != level-1):
+                break
+            
+            edges = []
+            for vert_edge in main_edge.edges:
+                if(vert_edge.level == level-1):
+                    if(vert_edge.vertices[0] in current_face.links and vert_edge.vertices[1] in current_face.links):
+                        add_generic(edges,vert_edge)
+                if(len(edges) == 2):
+                    break
+        
+            real_edges = []
+
+            for edge in edges:
+                if(edge.vertices[0] in current_face.links and edge.vertices[1] in current_face.links):
+                    add_generic(real_edges,edge)
+                if(len(edges) == 3):
+                    break
+            
+            edges.append(main_edge)
+
+            flags = [True,True,True,True]
+            
+            indices = [0,0,0,0]
+
+            for edgar in real_edges:
+                if(flags[0] and edgar==Edge([current_face.links[0],current_face.links[1]],[],[])):
+                    indices[0] = add_generic(vertices,edgar.edge_point)
+                    flags[0] = False
+                if(flags[1] and edgar==Edge([current_face.links[1],current_face.links[2]],[],[])):
+                    indices[1] = add_generic(vertices,edgar.edge_point)
+                    flags[1] = False
+                if(flags[2] and edgar==Edge([current_face.links[2],current_face.links[3]],[],[])):
+                    indices[2] = add_generic(vertices,edgar.edge_point)
+                    flags[2] = False
+                if(flags[3] and edgar==Edge([current_face.links[3],current_face.links[0]],[],[])):
+                    indices[3] = add_generic(vertices,edgar.edge_point)
+                    flags[3] = False
+
+            faces = [
+                VertexLink([current_face.links[0],indices[0],face_index,indices[3]],[RGBA(1,1,1)],level),
+                VertexLink([indices[0],current_face.links[1],indices[1],face_index],[RGBA(1,1,1)],level),
+                VertexLink([face_index,indices[1],current_face.links[2],indices[2]],[RGBA(1,1,1)],level),
+                VertexLink([indices[3],face_index,indices[2],current_face.links[3]],[RGBA(1,1,1)],level)
+            ]
+
+            for i in range(12):
+                parent.face_adjaceny.append(Edge([],[],[]))
+                parent.vertex_adjaceny.append(Edge([],[],[]))
+
+            parent.vertex_links.extend(faces)
+
+
+            for link in faces:
+                idx = parent.vertex_links.index(link)
+                for i in range(4):
+                    edge = Edge([link.links[i % 4],link.links[(i+1) % 4]],[],[],level)
+                    index = add_generic(parent.edge_adjaceny,edge)
+                    add_generic(parent.edge_adjaceny[index].faces,link)
+                    parent.face_adjaceny[idx] = parent.edge_adjaceny[index]
+                    parent.vertex_adjaceny[link.links[i % 4]] = parent.edge_adjaceny[index]
+                    parent.vertex_adjaceny[link.links[(i+1) % 4]] = parent.edge_adjaceny[index]
+
+
+    for edge in parent.edge_adjaceny:
+        if(edge.level == level):
+            for i in range(len(parent.edge_adjaceny)):
+                edg = parent.edge_adjaceny[i]
+                if(edg.level == level):
+                    if(edge != edg and edge.is_neighbour(edg)):
+                        add_generic(edge.edges,edg)
+
+
+    parent.set_vertices(vectors_to_matrices(vertices))
+
 
 def parametric_equation(x, y, r) -> Vec3d:
     """

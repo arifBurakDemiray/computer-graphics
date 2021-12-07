@@ -39,8 +39,8 @@ class QuadParser(Parser):
         vertices : 'list[Vec3d]' = []
         links : 'list[VertexLink]' = []
         edges : 'list[Edge]' = []
-        face_adjacents = []
-        vertex_adjacents = []
+        face_adjacents : 'list[Edge]' = []
+        vertex_adjacents : 'list[Edge]' = []
 
         file = open(self.file_name,"r")
 
@@ -55,20 +55,19 @@ class QuadParser(Parser):
         file.close()
 
         for i in range(len(links)):
-            face_adjacents.append(-1)
+            face_adjacents.append(Edge([],[],[]))
         for i in range(len(vertices)):
-            vertex_adjacents.append(-1)
+            vertex_adjacents.append(Edge([],[],[]))
 
         for link in links:
             idx = links.index(link)
             for i in range(4):
-                edge = Edge([link.links[i % 4],link.links[(i+1) % 4]],[idx],[])
+                edge = Edge([link.links[i % 4],link.links[(i+1) % 4]],[],[])
                 index = add_generic(edges,edge)
-                if(index!=len(edges)-1):
-                    add_generic(edges[index].faces,idx)
-                face_adjacents[idx] = index
-                vertex_adjacents[link.links[i % 4]] = index
-                vertex_adjacents[link.links[(i+1) % 4]] = index
+                add_generic(edges[index].faces,link)
+                face_adjacents[idx] = edges[index]
+                vertex_adjacents[link.links[i % 4]] = edges[index]
+                vertex_adjacents[link.links[(i+1) % 4]] = edges[index]
 
         for edge in edges:
             if(len(edge.faces)!=2):
@@ -78,7 +77,7 @@ class QuadParser(Parser):
         for edge in edges:
             for i in range(len(edges)):
                 if(edge != edges[i] and edge.is_neighbour(edges[i])):
-                    add_generic(edge.edges,i)
+                    add_generic(edge.edges,edges[i])
 
         for edge in edges:
             if(len(edge.edges)!=4):

@@ -21,8 +21,8 @@ class Polygon:
     vertex_links: 'list[VertexLink]'
     level: int
     edge_adjaceny: 'list[Edge]' = []
-    face_adjaceny: 'list[int]' = []
-    vertex_adjaceny: 'list[int]' = []
+    face_adjaceny: 'list[Edge]' = []
+    vertex_adjaceny: 'list[Edge]' = []
 
 
     def __init__(self, vertices: 'list[Vec3d]', vertex_links: 'list[VertexLink]', level: int = 0) -> None:
@@ -52,11 +52,11 @@ class Polygon:
         self.edge_adjaceny = edges
         return self
     
-    def with_vertices(self,vertices : 'list[int]') -> 'Polygon':
+    def with_vertices(self,vertices : 'list[Edge]') -> 'Polygon':
         self.vertex_adjaceny = vertices
         return self
 
-    def with_faces(self,faces : 'list[int]') -> 'Polygon':
+    def with_faces(self,faces : 'list[Edge]') -> 'Polygon':
         self.face_adjaceny = faces
         return self
 
@@ -254,12 +254,12 @@ class Polygon:
 
 class Edge:
     vertices : 'list[int]'
-    faces : 'list[int]'
-    edges : 'list[int]'
+    faces : 'list[VertexLink]'
+    edges : 'list[Edge]'
     edge_point : 'Vec3d' = Vec3d(0,0,0,1)
     level : int = 0
 
-    def __init__(self,vertices : 'list[int]',faces : 'list[int]',edges : 'list[int]', level: int = 0) -> None:
+    def __init__(self,vertices : 'list[int]',faces : 'list[VertexLink]',edges : 'list[Edge]', level: int = 0) -> None:
         self.vertices = vertices
         self.faces = faces
         self.edges = edges
