@@ -32,6 +32,18 @@ class Vec3d:
         """
         return self.x*self.y*self.z*self.w
 
+    def __add__(self, vector: 'Vec3d') -> 'Vec3d':
+        return self.add(vector)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.x == other.x and self.y == other.y and self.z == other.z and self.w == other.w 
+        else:
+            return False
+
+    def __div__(self, scalar: float) -> 'Vec3d':
+        return self.multiply(1/scalar)
+
     def calc_dot(self, vector: 'Vec3d') -> float:
         """
         Calculates dot product of 2 3d vectors by formula
