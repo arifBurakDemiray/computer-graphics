@@ -23,7 +23,7 @@ class Polygon:
     edge_adjaceny: 'list[Edge]' = []
     face_adjaceny: 'list[Edge]' = []
     vertex_adjaceny: 'list[Edge]' = []
-
+    #tried to do winged edge structure
 
     def __init__(self, vertices: 'list[Vec3d]', vertex_links: 'list[VertexLink]', level: int = 0) -> None:
         if(vertices != None):
@@ -257,7 +257,7 @@ class Edge:
     faces : 'list[VertexLink]'
     edges : 'list[Edge]'
     edge_point : 'Vec3d' = Vec3d(0,0,0,1)
-    level : int = 0
+    level : int = 0 
 
     def __init__(self,vertices : 'list[int]',faces : 'list[VertexLink]',edges : 'list[Edge]', level: int = 0) -> None:
         self.vertices = vertices

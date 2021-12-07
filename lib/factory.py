@@ -181,7 +181,7 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
 
     vertices = parent.vertices_to_vectors()
 
-    for face in parent.vertex_links:
+    for face in parent.vertex_links:    #find all faces' face points
         if(face.level == level-1):
 
             face_point = Vec3d(0,0,0,1)
@@ -191,7 +191,7 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
             face_point=face_point.multiply(1/4)
             face.face_point = face_point
     
-    for edge in parent.edge_adjaceny:
+    for edge in parent.edge_adjaceny: #find all edges' edge points
         if(edge.level == level-1):
             edge_point = Vec3d(0,0,0,1)
             for face in edge.faces:
@@ -201,19 +201,18 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
             edge_point = edge_point.multiply(1/4)
             edge.edge_point = edge_point
 
-    for i in range(len(vertices)):
+    for i in range(len(vertices)): #find all vertices' vertex points
         faces = []
         edges = []
         edges.append(parent.vertex_adjaceny[i])
         edge = parent.vertex_adjaceny[i]
         faces.extend(edge.faces)
-        for edge in edge.edges:
+        for edge in edge.edges: #find all related faces and edges of this point
             if(i in edge.vertices):
                 add_generic(edges,edge)
                 for face in edge.faces:
-                    add_generic(faces,face)
-        if(len(faces) != 3 or len(edges)!= 3):
-            print("ERROR")
+                    if(i in face.links):
+                        add_generic(faces,face)
         
         F = Vec3d(0,0,0,1)
         for face in faces:
@@ -229,7 +228,7 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
     
     len_links = len(parent.vertex_links)
 
-    for face in range(len_links):
+    for face in range(len_links): #for each face create new faces and add them to face list
         current_face = parent.vertex_links[face]
         if(current_face.level == level-1):
 
@@ -241,7 +240,7 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
                 break
             
             edges = [main_edge]
-            for vert_edge in main_edge.edges:
+            for vert_edge in main_edge.edges:   #find all edges that touching this face
                 if(vert_edge.level == level-1):
                     if(vert_edge.vertices[0] in current_face.links and vert_edge.vertices[1] in current_face.links):
                         add_generic(edges,vert_edge)
@@ -249,9 +248,11 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
                             if(child_vert_edge.vertices[0] in current_face.links and child_vert_edge.vertices[1] in current_face.links):
                                 add_generic(edges,child_vert_edge)
 
-            flags = [True,True,True,True]
+            flags = [True,True,True,True] #found that side of the edge
             
-            indices = [0,0,0,0]
+            #I draw like first find 01 edge of the face and divide it than 12,23,30
+
+            indices = [0,0,0,0] #added edge point vertex
 
             for edgar in edges:
                 if(flags[0] and edgar==Edge([current_face.links[0],current_face.links[1]],[],[])):
@@ -266,12 +267,12 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
                 if(flags[3] and edgar==Edge([current_face.links[3],current_face.links[0]],[],[])):
                     indices[3] = add_generic(vertices,edgar.edge_point)
                     flags[3] = False
-
+            #create faces anti-clocwise
             faces = [
-                VertexLink([current_face.links[0],indices[0],face_index,indices[3]],[RGBA(1,1,1)],level),
-                VertexLink([indices[0],current_face.links[1],indices[1],face_index],[RGBA(1,1,1)],level),
-                VertexLink([face_index,indices[1],current_face.links[2],indices[2]],[RGBA(1,1,1)],level),
-                VertexLink([indices[3],face_index,indices[2],current_face.links[3]],[RGBA(1,1,1)],level)
+                VertexLink([current_face.links[0],indices[0],face_index,indices[3]],[RGBA.pick_random_color()],level),
+                VertexLink([indices[0],current_face.links[1],indices[1],face_index],[RGBA.pick_random_color()],level),
+                VertexLink([face_index,indices[1],current_face.links[2],indices[2]],[RGBA.pick_random_color()],level),
+                VertexLink([indices[3],face_index,indices[2],current_face.links[3]],[RGBA.pick_random_color()],level)
             ]
 
             for i in range(4):
@@ -282,7 +283,7 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
 
             parent.vertex_links.extend(faces)
 
-
+            #same logic as obj_parser's definement of adjacency
             for link in faces:
                 idx = parent.vertex_links.index(link)
                 for i in range(4):

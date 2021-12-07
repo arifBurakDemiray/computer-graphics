@@ -4,7 +4,7 @@
 # November 2021
 
 from lib.obj_parser import QuadParser
-from lib.populator import QuadPopulator, Populator
+from lib.populator import QuadPopulator, Populator, QuadPopulatorCatmull
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -126,7 +126,7 @@ def main() -> None:
     parser = QuadParser(sys.argv[1])  #read file name
     obj = parser.parse()  #parse it
 
-    scene.subscribe(QuadPopulator(obj)) #and create populator o it
+    scene.subscribe(QuadPopulatorCatmull(obj)) #and create populator o it
 
     print_menu()  #print menu to console
     
