@@ -232,6 +232,7 @@ class QuadPopulator(Populator):
 class QuadPopulatorCatmull(Populator):
 
     vertex_list = []
+    added = True
 
     def __init__(self) -> None:
         super().__init__()
@@ -247,12 +248,13 @@ class QuadPopulatorCatmull(Populator):
 
         flag = True
         
-        if(self.level == 0):
+        if(self.added and self.level == 0):
+            self.added = False
             self.vertex_list.append(self.models[0].vertices_to_vectors())
 
         self.level+=1
 
-        if(len(self.vertex_list)-1>self.level):
+        if(len(self.vertex_list)>self.level):
             flag=False
 
         if(flag):
