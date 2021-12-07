@@ -6,7 +6,7 @@
 
 
 from .glu_helper import gluPrintText
-from .factory import create_cube,create_sub_level_cyclinder,create_sub_level_cubes, create_sphere, create_sub_level_polygon
+from .factory import create_cube,create_sub_level_cyclinder,create_sub_level_cubes, create_sphere, create_sub_level_polygon,create_sub_level_polygon_catmull
 from .polygon import Polygon
 from .vec3d import Vec3d
 from OpenGL.GL import *
@@ -198,7 +198,7 @@ class QuadPopulator(Populator):
                 break
 
         if(flag):
-            create_sub_level_polygon(self.level,self.models[0])
+            create_sub_level_polygon_catmull(self.level,self.models[0])
 
     def populate_down(self) -> None:
         if(self.level == 0):
@@ -228,3 +228,54 @@ class QuadPopulator(Populator):
         
         gluPrintText("Level: "+str(self.level))
         
+class TriPopulator(Populator):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.models = [create_cube()]
+        self.translator = Vec3d(1.5, 0.0, -7.0, 1.0)
+
+    def __init__(self,obj : Polygon) -> None:
+        super().__init__()
+        self.models = [obj]
+        self.translator = Vec3d(1.5, 0.0, -7.0, 1.0)
+
+    def populate_up(self) -> None:
+        self.level+=1
+
+        flag = True
+        for face in self.models[0].vertex_links:
+            if(face.level == self.level):
+                flag = False
+                break
+
+        if(flag):
+            create_sub_level_polygon_catmull(self.level,self.models[0])
+
+    def populate_down(self) -> None:
+        if(self.level == 0):
+            return
+
+        self.level-=1
+    
+    def draw(self) -> None:        
+        glLoadIdentity()
+        
+        model = self.models[0]
+
+        for rope in self.models[0].vertex_links:
+            if(rope.level != self.level):
+                continue
+            rgb = rope.colors[0]
+            glBegin(GL_LINE_LOOP)
+            glColor3f(rgb.r, rgb.b, rgb.g) #draw color for each face
+            for i in range(len(rope.links)):
+                glVertex4fv(model.get(rope.links[i]))
+            glEnd()
+            glBegin(GL_TRIANGLES)
+            glColor4f(0.1,0.1,0.1,0.7) #draw color for each face
+            for i in range(len(rope.links)):
+                glVertex4fv(model.get(rope.links[i]))
+            glEnd()
+        
+        gluPrintText("Level: "+str(self.level))
