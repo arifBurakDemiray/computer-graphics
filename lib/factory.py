@@ -233,8 +233,6 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
         current_face = parent.vertex_links[face]
         if(current_face.level == level-1):
 
-            
-
             face_index = add_generic(vertices,current_face.face_point)
 
             main_edge = parent.face_adjaceny[face]
@@ -242,29 +240,20 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
             if(main_edge.level != level-1):
                 break
             
-            edges = []
+            edges = [main_edge]
             for vert_edge in main_edge.edges:
                 if(vert_edge.level == level-1):
                     if(vert_edge.vertices[0] in current_face.links and vert_edge.vertices[1] in current_face.links):
                         add_generic(edges,vert_edge)
-                if(len(edges) == 2):
-                    break
-        
-            real_edges = []
-
-            for edge in edges:
-                if(edge.vertices[0] in current_face.links and edge.vertices[1] in current_face.links):
-                    add_generic(real_edges,edge)
-                if(len(edges) == 3):
-                    break
-            
-            edges.append(main_edge)
+                        for child_vert_edge in vert_edge.edges:
+                            if(child_vert_edge.vertices[0] in current_face.links and child_vert_edge.vertices[1] in current_face.links):
+                                add_generic(edges,child_vert_edge)
 
             flags = [True,True,True,True]
             
             indices = [0,0,0,0]
 
-            for edgar in real_edges:
+            for edgar in edges:
                 if(flags[0] and edgar==Edge([current_face.links[0],current_face.links[1]],[],[])):
                     indices[0] = add_generic(vertices,edgar.edge_point)
                     flags[0] = False
@@ -285,8 +274,10 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
                 VertexLink([indices[3],face_index,indices[2],current_face.links[3]],[RGBA(1,1,1)],level)
             ]
 
-            for i in range(12):
+            for i in range(4):
                 parent.face_adjaceny.append(Edge([],[],[]))
+            
+            for i in range(5):
                 parent.vertex_adjaceny.append(Edge([],[],[]))
 
             parent.vertex_links.extend(faces)
@@ -307,9 +298,8 @@ def create_sub_level_polygon_catmull(level: int, parent: Polygon) -> None:
         if(edge.level == level):
             for i in range(len(parent.edge_adjaceny)):
                 edg = parent.edge_adjaceny[i]
-                if(edg.level == level):
-                    if(edge != edg and edge.is_neighbour(edg)):
-                        add_generic(edge.edges,edg)
+                if(edge != edg and edge.is_neighbour(edg)):
+                    add_generic(edge.edges,edg)
 
 
     parent.set_vertices(vectors_to_matrices(vertices))
