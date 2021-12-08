@@ -274,6 +274,8 @@ class QuadPopulatorCatmull(Populator):
         
         model = self.models[0]
 
+        poly_count = 0
+
         for rope in self.models[0].vertex_links:
             if(rope.level != self.level):
                 continue
@@ -288,5 +290,9 @@ class QuadPopulatorCatmull(Populator):
             for i in range(len(rope.links)):
                 glVertex4fv(model.get(rope.links[i]))
             glEnd()
+            poly_count+=1
         
+
+
         gluPrintText("Level: "+str(self.level))
+        gluPrintText("Polygons: "+str(poly_count),20)

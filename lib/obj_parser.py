@@ -70,18 +70,11 @@ class QuadParser(Parser):
                 vertex_adjacents[link.links[i % 4]] = edges[index]
                 vertex_adjacents[link.links[(i+1) % 4]] = edges[index]
 
-        for edge in edges:
-            if(len(edge.faces)!=2):
-                print("FACE ERROR")
-
 
         for edge in edges:  #in this loop all edges neighbours are initialized
             for i in range(len(edges)): #if one vertes is same they are adjacent
                 if(edge != edges[i] and edge.is_neighbour(edges[i])):
                     add_generic(edge.edges,edges[i]) #do not allow duplicate
 
-        for edge in edges:
-            if(len(edge.edges)!=4):
-                print("EDGE ERROR")
 
         return Polygon(vertices,links).with_edges(edges).with_vertices(vertex_adjacents).with_faces(face_adjacents)

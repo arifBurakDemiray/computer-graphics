@@ -4,6 +4,11 @@
 # November 2021
 
 from typing import Any
+from OpenGL.raw.GL.VERSION.GL_1_0 import GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, glClear,glColor3f
+from OpenGL.raw.GLUT import glutBitmapCharacter
+from OpenGL.GLUT.fonts import GLUT_BITMAP_HELVETICA_10
+from OpenGL.raw.GL.VERSION.GL_1_4 import glWindowPos2f
+from OpenGL.raw.GLUT import glutSwapBuffers
 from OpenGL.raw.GLUT.constants import *
 from OpenGL.GLUT.freeglut import glutLeaveMainLoop
 from lib.exporter import export_as_obj
@@ -12,6 +17,7 @@ from .populator import Populator
 class Scene:
 
     populators : 'list[Populator]'
+    is_process : bool = False
 
     def __init__(self) -> None:
         self.populators = []
@@ -26,8 +32,44 @@ class Scene:
         self.populators.__delitem__(-1)
 
     def draw(self) -> None:
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
         for populator in self.populators:
             populator.draw()
+        self.is_process = False
+
+        self.print_menu(480)
+
+        glutSwapBuffers()
+
+    def print_menu(self,height) -> None:
+        menu = [
+                "Hit ESC key to quit",
+                "Hit + to increase subdivide",
+                "Hit - to decrease subdivide",
+                "Hit RIGHT Arrow Key to rotate right by y axis",
+                "Hit LEFT Arrow Key to rotate left by y axis",
+                "Hit UP Arrow Key to rotate up by x axis",
+                "Hit DOWN Arrow Key to rotate down by x axis",
+                "Hit * to rotate up by z axis",
+                "Hit / to rotate down by z axis",
+                "Hit BACKSPACE to Undo",
+                "Hit PAGE UP to zoom in",
+                "Hit PAGE DOWN to zoom out",
+                "Hit S export as obj file",
+                "Use your mouse to move camera (it is in early stage)"]
+        h_buff = -10
+        for text in menu:
+            glColor3f( 1,1,1 )
+            glWindowPos2f(2, height+h_buff)
+            for i in range(len(text)):
+                glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, ord(text[i]))
+            h_buff-=10
+
+    def idle(self) -> None:
+        if(self.is_process):
+            self.draw()
 
     def process(self, args : 'list[Any]' = []) -> None:
 
@@ -69,3 +111,5 @@ class Scene:
             populator.models[0].project(args[1])
 
         populator.translate_models()
+
+        self.is_process = True

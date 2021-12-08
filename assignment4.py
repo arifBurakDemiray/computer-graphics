@@ -44,11 +44,10 @@ def ReSizeGLScene(Width: float, Height: float) -> None:
 
 
 def DrawGLScene() -> None:
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     scene.draw() #populator's draw method
 
-    glutSwapBuffers()
+
 
 
 def keyPressed(key, x, y) -> None:
@@ -94,9 +93,12 @@ def InitScreen() -> None:
     glutCreateWindow("CENG487 Assignment 3")
     glEnable(GL_BLEND)
 
+def IdleFunc() -> None:
+    scene.idle()
+
 def InitFunctions() -> None:
     glutDisplayFunc(DrawGLScene)
-    glutIdleFunc(DrawGLScene)
+    glutIdleFunc(IdleFunc)
     
     glutReshapeFunc(ReSizeGLScene)
     
