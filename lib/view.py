@@ -1,7 +1,7 @@
-# CENG 487 Assignment3 by
+# CENG 487 Assignment4 by
 # Arif Burak Demiray
 # StudentId: 250201022
-# November 2021
+# December 2021
 
 from .vec3d import Vec3d
 import numpy as np

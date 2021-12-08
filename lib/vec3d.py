@@ -1,7 +1,7 @@
-# CENG 487 Assignment3 by
+# CENG 487 Assignment4 by
 # Arif Burak Demiray
 # StudentId: 250201022
-# November 2021
+# December 2021
 
 import numpy as np
 from .helper import degree_to_radian, radian_to_degree
