@@ -29,6 +29,9 @@ class Camera:
 							Vector3f(0.0, 1.0, 0.0) )
 
 
+	def computeFrame(self):
+		pass
+
 	def createView(self, eyePoint, centerPoint, upVector):
 		self.eye = eyePoint
 		self.orgEye = eyePoint
