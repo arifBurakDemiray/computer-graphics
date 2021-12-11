@@ -126,12 +126,12 @@ class View:
 		if args[0] == GLUT_KEY_LEFT:
 			self.camera.eye.x -= .5
 			self.camera.center.x -= .5
-			self.camera.computeFrame()
+			self.draw()  #computeFrame
 
 		if args[0] == GLUT_KEY_RIGHT:
 			self.camera.eye.x += .5
 			self.camera.center.x += .5
-			self.camera.computeFrame()
+			self.draw()
 
 
 	def mousePressed(self, button, state, x, y):

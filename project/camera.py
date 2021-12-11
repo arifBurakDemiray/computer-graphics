@@ -30,7 +30,7 @@ class Camera:
 
 
 	def computeFrame(self):
-		pass
+		self.createView(self.eye,self.center,Vector3f(0.0, 1.0, 0.0))
 
 	def createView(self, eyePoint, centerPoint, upVector):
 		self.eye = eyePoint
