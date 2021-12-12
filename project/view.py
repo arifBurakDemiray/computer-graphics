@@ -165,13 +165,13 @@ class View:
 
 		if ( self.event.button == GLUT_RIGHT_BUTTON ):
 			self.camera.zoom(xOffset)
-			#self.camera.roll(yOffset)
+			self.camera.roll(yOffset)
 		elif ( self.event.button == GLUT_MIDDLE_BUTTON ):
 			self.camera.dolly(-xOffset, yOffset, 0)
 		elif ( self.event.button == GLUT_LEFT_BUTTON ):
 			self.camera.yaw(xOffset)
 			self.camera.pitch(yOffset)
-			#self.camera.dollyCamera(-xOffset, yOffset, 0)
+			self.camera.dollyCamera(-xOffset, yOffset, 0)
 
 		# store last positions
 		self.mouseX = x
