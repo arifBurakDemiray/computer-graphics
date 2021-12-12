@@ -121,9 +121,6 @@ class Cube(_Shape):
 		self.drawStyle = DrawStyle.SMOOTH
 
 		for i in range (0, len(faces) + 1):
-			r = random.uniform(0, 1)
-			g = random.uniform(0, 1)
-			b = random.uniform(0, 1)
-			self.colors.append( ColorRGBA(r, g, b, 1.0) )
+			self.colors.append( ColorRGBA.pick_random_color() )
 
 

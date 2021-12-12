@@ -3,7 +3,10 @@
 # Coskun Yerli
 # StudentId:200201004
 # 11.2016
-from math import pi,sin,cos,sqrt,acos
+from math import sin,cos,sqrt,acos
+
+
+from numpy.random import random_sample
 
 __all__ = ['HCoord', 'Vector3f', 'Point3f', 'ColorRGBA']
 
@@ -139,3 +142,8 @@ class ColorRGBA(HCoord):
 		self.g = self.y
 		self.b = self.z
 		self.a = self.w
+
+	@staticmethod
+	def pick_random_color() -> 'ColorRGBA':
+		return ColorRGBA(random_sample(),random_sample(),random_sample(),1.0)
+
