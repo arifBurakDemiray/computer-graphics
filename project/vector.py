@@ -4,8 +4,6 @@
 # December 2021
 
 from math import sin,cos,sqrt,acos
-import numpy
-
 
 from numpy.random import random_sample
 
