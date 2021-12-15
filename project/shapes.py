@@ -74,16 +74,27 @@ class _Shape:
 
         faceId = 0
 
-        lastAccessed = ColorRGBA(0, 0, 0, 1)
+        lastAccessed = [0.0, 0.0, 0.0, 1.0]
 
         for face in self.faces:
+            if self.drawStyle == DrawStyle.FACETED or self.drawStyle == DrawStyle.SMOOTH:
+                if(len(self.colors) > 0):
+                    lastAccessed = self.colors[faceId].asList()
+                else:
+                    lastAccessed = [1.0, 0.6, 0.0, 1.0]
+
+            if self.drawStyle == DrawStyle.WIRE or (not self.wireOnShaded):
+                if not self.wireOnShaded:
+                    if not self.fixedDrawStyle:
+                        lastAccessed = self.wireColor.asList()
+                    else:
+                        lastAccessed = self.wireOnShadedColor.asList()
+                else:
+                    lastAccessed = self.wireColor.asList()
+
             for vertex in face:
                 finalVertexPositions.extend(self.vertices[vertex].asList())
-                try:
-                    lastAccessed = self.colors[faceId]
-                except IndexError:
-                    continue
-                finalVertexColors.extend(lastAccessed.asList())
+                finalVertexColors.extend(lastAccessed)
 
             faceId += 1
 
@@ -105,7 +116,14 @@ class _Shape:
         glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
         glEnableVertexAttribArray(1)
 
-        glDrawArrays(GL_QUADS, 0, len(self.vertices) * 4)
+        type_of_draw = GL_QUADS
+
+        if self.drawStyle == DrawStyle.FACETED or self.drawStyle == DrawStyle.SMOOTH:
+            type_of_draw = GL_QUADS
+        if self.drawStyle == DrawStyle.WIRE or (not self.wireOnShaded):
+            type_of_draw = GL_LINES
+
+        glDrawArrays(type_of_draw, 0, len(self.vertices) * 4)
 
         glDisableVertexAttribArray(0)
         glDisableVertexAttribArray(1)
