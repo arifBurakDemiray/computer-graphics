@@ -29,7 +29,28 @@ class _Shape:
 		self.bboxObj = BoundingBox()
 		self.bboxWorld = BoundingBox()
 		self.calcBboxObj()
+		self.VBOData = []
 
+
+	def initBuffers(self):
+		self.VAO = glGenVertexArrays(1)
+		self.VBO = glGenBuffers(1)
+		glBindVertexArray(self.VAO)
+		glBindBuffer(GL_ARRAY_BUFFER,self.VBO)
+		elementSize = numpy.dtype(numpy.float32).itemsize
+		glBufferData(GL_ARRAY_BUFFER,len(self.VBOData) * elementSize,self.VBOData,GL_STATIC_DRAW)
+		offset = 0
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
+		glEnableVertexAttribArray(0)
+
+		# define colors which are passed in location 1 - they start after all positions and has four floats consecutively
+		offset += elementSize * 4 * len(self.vertices)
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
+		glEnableVertexAttribArray(1)
+
+		# reset array buffers
+		glBindBuffer(GL_ARRAY_BUFFER, 0)
+		glBindVertexArray(0)
 
 	def calcBboxObj(self):
 		for vertex in self.vertices:
@@ -48,44 +69,28 @@ class _Shape:
 		self.wireWidth = width
 
 
-	def draw(self):
-		index = 0
+	def prepareVBD(self):
+		finalVertexPositions = []
+		finalVertexColors = []
+
+		# go over faces and assemble an array for all vertex data
+		faceID = 0
 		for face in self.faces:
-			if self.drawStyle == DrawStyle.FACETED or self.drawStyle == DrawStyle.SMOOTH:
-				glBegin(GL_POLYGON)
+			for vertex in face:
+				finalVertexPositions.extend(self.vertices[vertex].asList())
+				finalVertexColors.extend(ColorRGBA.pick_random_color().asList())
 
-				if len(self.colors) > 0:
-					glColor3f(self.colors[index].r, self.colors[index].g, self.colors[index].b)
-				else:
-					glColor3f(1.0, 0.6, 0.0)
+		faceID += 1
 
-				for vertex in face:
-					glVertex3f(self.vertices[vertex].x, self.vertices[vertex].y, self.vertices[vertex].z)
-				glEnd()
+		self.VBOData = numpy.array(finalVertexPositions + finalVertexColors, dtype='float32')
 
-			if self.drawStyle == DrawStyle.WIRE or self.wireOnShaded == True:
-				glPolygonMode( GL_FRONT_AND_BACK, GL_LINE )
-				glLineWidth(self.wireWidth)
-				#glDisable(GL_LIGHTING)
 
-				glBegin(GL_POLYGON)
-
-				if self.wireOnShaded == True:
-					if self.fixedDrawStyle == True:
-						glColor3f(self.wireColor.r, self.wireColor.g, self.wireColor.b)
-					else:
-						glColor3f(self.wireOnShadedColor.r, self.wireOnShadedColor.g, self.wireOnShadedColor.b)
-				else:
-					glColor3f(self.wireColor.r, self.wireColor.g, self.wireColor.b)
-
-				for vertex in face:
-					glVertex3f(self.vertices[vertex].x, self.vertices[vertex].y, self.vertices[vertex].z)
-				glEnd()
-
-				glPolygonMode( GL_FRONT_AND_BACK, GL_FILL )
-				#glEnable(GL_LIGHTING)
-
-			index += 1
+	def draw(self):
+		self.prepareVBD()
+		self.initBuffers()
+		glBindVertexArray(self.VAO)
+		glDrawArrays(GL_QUADS, 0, len(self.vertices))
+		glBindVertexArray(0)
 
 	def Translate(self, x, y, z):
 		translate = Matrix.T(x, y, z)

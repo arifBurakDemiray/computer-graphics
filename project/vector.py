@@ -4,6 +4,7 @@
 # StudentId:200201004
 # 11.2016
 from math import sin,cos,sqrt,acos
+import numpy
 
 
 from numpy.random import random_sample
@@ -17,6 +18,8 @@ class HCoord:
 		self.z = z
 		self.w = w
 
+	def asList(self):
+		return [self.x,self.y,self.z,self.w]
 
 	def sqrlen(self):
 		return 1.0 * self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w

@@ -1,6 +1,4 @@
 import sys
-import numpy
-import math
 
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -62,23 +60,9 @@ def main():
 	glutMouseFunc( view.mousePressed )
 	glutMotionFunc( view.mouseMove )
 
-	# Initialize our window
-	width = 640
-	height = 480
-	glClearColor(0.0, 0.0, 0.0, 0.0)	# This Will Clear The Background Color To Black
-	glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
-	glDepthFunc(GL_LEQUAL)				# The Type Of Depth Test To Do
-	glEnable(GL_DEPTH_TEST)				# Enables Depth Testing
-	#glEnable(GL_LINE_SMOOTH)			# Enable line antialiasing
-	glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
-	glMatrixMode(GL_PROJECTION)
-	glLoadIdentity()					# Reset The Projection Matrix
+	view.initProgram()
 
-	# create the perpective projection
-	gluPerspective( view.camera.fov, float(width)/float(height), camera.near, camera.far )
-	glMatrixMode(GL_MODELVIEW)
 
-	# Start Event Processing Engine
 	glutMainLoop()
 
 # Print message to console, and kick off the main to get it rolling.
