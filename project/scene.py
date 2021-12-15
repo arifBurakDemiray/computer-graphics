@@ -4,10 +4,8 @@
 # December 2021
 
 class Scene:
-	def __init__(self):
-		self.nodes = []
+    def __init__(self):
+        self.nodes = []
 
-
-	def add(self, node):
-		self.nodes.append(node)
-
+    def add(self, node):
+        self.nodes.append(node)

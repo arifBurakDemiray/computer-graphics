@@ -5,12 +5,11 @@
 
 class Shader:
 
-    
     def __init__(self) -> None:
-        self.filenames = ["vertex_shader.glsl","fragment_shader.glsl"]    
+        self.filenames = ["vertex_shader.glsl", "fragment_shader.glsl"]
 
     def get_vertex_shader(self) -> None:
-        f = open(self.filenames[0],"r")
+        f = open(self.filenames[0], "r")
 
         file = f.read()
 
@@ -19,7 +18,7 @@ class Shader:
         return file
 
     def get_fragment_shader(self) -> None:
-        f = open(self.filenames[1],"r")
+        f = open(self.filenames[1], "r")
 
         file = f.read()
 

@@ -23,9 +23,9 @@ grid.setWireWidth(1)
 
 # create camera
 camera = Camera()
-camera.createView( 	Point3f(0.0, 0.0, 10.0), \
-					Point3f(0.0, 0.0, 0.0), \
-					Vector3f(0.0, 1.0, 0.0) )
+camera.createView(Point3f(0.0, 0.0, 10.0),
+                  Point3f(0.0, 0.0, 0.0),
+                  Vector3f(0.0, 1.0, 0.0))
 camera.setNear(1)
 camera.setFar(1000)
 
@@ -38,41 +38,41 @@ view.setScene(scene)
 
 # create objects
 cube1 = Cube("cube", 1, 1, 1, 10, 10, 10)
-cube1.Translate( 2, 0.5, 0)
+cube1.Translate(2, 0.5, 0)
 scene.add(cube1)
 
 cube2 = Cube("cube", 1.5, 1.5, 1.5, 10, 10, 10)
-cube2.Translate( -2, 0, 0)
+cube2.Translate(-2, 0, 0)
 scene.add(cube2)
 
+
 def main():
-	global view
-	glutInit(sys.argv)
+    global view
+    glutInit(sys.argv)
 
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
 
-	glutInitWindowSize(640, 480)
-	glutInitWindowPosition(200, 200)
+    glutInitWindowSize(640, 480)
+    glutInitWindowPosition(200, 200)
 
-	window = glutCreateWindow("CENG487 Assigment 5")
+    glutCreateWindow("CENG487 Assigment 5")
 
-	# define callbacks
-	glutDisplayFunc( view.draw )
-	glutIdleFunc( view.idleFunction )
-	glutReshapeFunc( view.resizeView )
-	glutKeyboardFunc( view.keyPressed )
-	glutSpecialFunc( view.specialKeyPressed )
-	glutMouseFunc( view.mousePressed )
-	glutMotionFunc( view.mouseMove )
+    # define callbacks
+    glutDisplayFunc(view.draw)
+    glutIdleFunc(view.idleFunction)
+    glutReshapeFunc(view.resizeView)
+    glutKeyboardFunc(view.keyPressed)
+    glutSpecialFunc(view.specialKeyPressed)
+    glutMouseFunc(view.mousePressed)
+    glutMotionFunc(view.mouseMove)
 
-	view.initProgram()
+    view.initProgram()
 
+    glutMainLoop()
 
-	glutMainLoop()
 
 # Print message to console, and kick off the main to get it rolling.
 print("Hit ESC key to quit.")
 
 if __name__ == '__main__':
-	main()
-
+    main()
