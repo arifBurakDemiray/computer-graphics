@@ -265,44 +265,27 @@ class Camera:
 
 	def getViewMatrix(self):
 
-		x = self.cameraX.x
-		y = self.cameraY.y
-		z = self.cameraZ.z
-
-		camZAxis = normalize(numpy.array([-x, -y, -z, 0.0], dtype='float32'))
-		camXAxis = cross(camZAxis, [self.up.x,self.up.y,self.up.z,self.up.w])
-		camYAxis = cross(camXAxis, camZAxis)
-
-		rotMat = numpy.array([	camXAxis[0], camYAxis[0], -camZAxis[0], 0.0,
-								camXAxis[1], camYAxis[1], -camZAxis[1], 0.0,
-								camXAxis[2], camYAxis[2], -camZAxis[2], 0.0,
+		rotMat = numpy.array([	self.cameraX.x, self.cameraY.x, -self.cameraZ.x, 0.0,
+								self.cameraX.y, self.cameraY.y, -self.cameraZ.y, 0.0,
+								self.cameraX.z, self.cameraY.z, -self.cameraZ.z, 0.0,
 								0.0, 0.0, 0.0, 1.0], dtype='float32').reshape(4,4)
 
 		traMat = numpy.array([	1.0, 0.0, 0.0, 0.0,
 								0.0, 1.0, 0.0, 0.0,
 								0.0, 0.0, 1.0, 0.0,
-								-x, -y, -z, 1.0], dtype='float32').reshape(4,4)
+								-self.eye.x, -self.eye.y, -self.eye.z, 1.0], dtype='float32').reshape(4,4)
 
-		return traMat.dot(rotMat)		
+		return traMat.dot(rotMat)	
 
 	def getProjMatrix(self):
 		f = numpy.reciprocal(numpy.tan(numpy.divide(numpy.deg2rad(self.fov), 2.0)))
 		base = self.near - self.far
+		term_0_0 = numpy.divide(f, 1)
 		term_2_2 = numpy.divide(self.far + self.near, base)
 		term_2_3 = numpy.divide(numpy.multiply(numpy.multiply(2, self.near), self.far), base)
 
 		# https://en.wikibooks.org/wiki/GLSL_Programming/Vertex_Transformations
-		return  numpy.array([	f, 0.0, 0.0, 0.0,
+		return  numpy.array([	term_0_0, 0.0, 0.0, 0.0,
 								0.0, f, 0.0, 0.0,
 								0.0, 0.0, term_2_2, -1,
-								0.0, 0.0, term_2_3, 0.0], dtype='float32')
-
-
-def cross(vec1, vec2):
-	result = numpy.cross(vec1[0:3], vec2[0:3], axisa=0, axisb=0, axisc=0)
-	return numpy.array([result[0], result[1], result[2], 0.0], dtype='float32')
-
-
-def normalize(vec):
-	vecLen = sqrt(1.0 * numpy.dot(vec, vec))
-	return vec / vecLen
+								0.0, 0.0, term_2_3, 0.0], dtype='float32')	

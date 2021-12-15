@@ -30,27 +30,28 @@ class _Shape:
 		self.bboxWorld = BoundingBox()
 		self.calcBboxObj()
 		self.VBOData = []
+		
 
 
 	def initBuffers(self):
-		self.VAO = glGenVertexArrays(1)
 		self.VBO = glGenBuffers(1)
-		glBindVertexArray(self.VAO)
-		glBindBuffer(GL_ARRAY_BUFFER,self.VBO)
+
+		# set array buffer to our ID
+		glBindBuffer(GL_ARRAY_BUFFER, self.VBO)
+
 		elementSize = numpy.dtype(numpy.float32).itemsize
-		glBufferData(GL_ARRAY_BUFFER,len(self.VBOData) * elementSize,self.VBOData,GL_STATIC_DRAW)
-		offset = 0
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
-		glEnableVertexAttribArray(0)
 
-		# define colors which are passed in location 1 - they start after all positions and has four floats consecutively
-		offset += elementSize * 4 * len(self.vertices)
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
-		glEnableVertexAttribArray(1)
+		glBufferData( # PyOpenGL allows for the omission of the size parameter
+			GL_ARRAY_BUFFER,
+			elementSize * len(self.VBOData),
+			self.VBOData,
+			GL_STATIC_DRAW
+		)
 
-		# reset array buffers
+		# reset array buffer
 		glBindBuffer(GL_ARRAY_BUFFER, 0)
-		glBindVertexArray(0)
+
+
 
 	def calcBboxObj(self):
 		for vertex in self.vertices:
@@ -74,23 +75,43 @@ class _Shape:
 		finalVertexColors = []
 
 		# go over faces and assemble an array for all vertex data
-		faceID = 0
+
 		for face in self.faces:
 			for vertex in face:
 				finalVertexPositions.extend(self.vertices[vertex].asList())
 				finalVertexColors.extend(ColorRGBA.pick_random_color().asList())
 
-		faceID += 1
 
 		self.VBOData = numpy.array(finalVertexPositions + finalVertexColors, dtype='float32')
 
 
 	def draw(self):
+
 		self.prepareVBD()
 		self.initBuffers()
-		glBindVertexArray(self.VAO)
-		glDrawArrays(GL_QUADS, 0, len(self.vertices))
-		glBindVertexArray(0)
+
+		glBindBuffer(GL_ARRAY_BUFFER, self.VBO)
+		elementSize = numpy.dtype(numpy.float32).itemsize
+		offset = 0
+
+		
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
+		glEnableVertexAttribArray(0)
+
+		
+		offset +=  elementSize * 4 * len(self.vertices)
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
+		glEnableVertexAttribArray(1)
+
+		glDrawArrays(GL_POLYGON, 0, len(self.vertices))
+		
+		glDisableVertexAttribArray(0)
+		glDisableVertexAttribArray(1)
+		
+		glBindBuffer(GL_ARRAY_BUFFER, 0)
+
+
+
 
 	def Translate(self, x, y, z):
 		translate = Matrix.T(x, y, z)

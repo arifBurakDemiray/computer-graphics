@@ -40,11 +40,11 @@ class View:
 	def initProgram(self):
 		shaderList = []
 
-		shaderList.append(createShader(GL_VERTEX_SHADER, self.shader.get_vertex_shader()))
-		shaderList.append(createShader(GL_FRAGMENT_SHADER, self.shader.get_fragment_shader()))
+		shaderList.append(self.createShader(GL_VERTEX_SHADER, self.shader.get_vertex_shader()))
+		shaderList.append(self.createShader(GL_FRAGMENT_SHADER, self.shader.get_fragment_shader()))
 
 		
-		self.programID = createProgram(shaderList)
+		self.programID = self.createProgram(shaderList)
 
 		for shader in shaderList:
 			glDeleteShader(shader)
@@ -58,25 +58,15 @@ class View:
 
 		viewLocation = glGetUniformLocation(self.programID, "view")
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, self.camera.getViewMatrix())
+
 		projLocation = glGetUniformLocation(self.programID, "proj")
 		glUniformMatrix4fv(projLocation, 1, GL_FALSE, self.camera.getProjMatrix())
 
-		# update camera
-		# gluLookAt(	self.camera.eye.x, self.camera.eye.y, self.camera.eye.z, \
-		# 			self.camera.center.x, self.camera.center.y, self.camera.center.z, \
-		# 			self.camera.up.x, self.camera.up.y, self.camera.up.z )
-
 		# first draw grid
-		modelLocation = glGetUniformLocation( self.programID, "model" )
-		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, self.grid.obj2World.asNumpy())
 		self.grid.draw()
 
-		# now draw scene
 		for node in self.scene.nodes:
-			modelLocation = glGetUniformLocation( self.programID, "model" )
-			glUniformMatrix4fv(modelLocation, 1, GL_FALSE, node.obj2World.asNumpy())
 			node.draw()
-			break
 
 		glUseProgram(0)
 		glutSwapBuffers()
@@ -159,6 +149,49 @@ class View:
 			self.camera.eye.x += .5
 			self.camera.center.x += .5
 			self.draw()
+
+	def createShader(self,shaderType, shaderCode):
+		shaderID = glCreateShader(shaderType)
+		glShaderSource(shaderID, shaderCode)
+		glCompileShader(shaderID)
+
+		status = None
+		glGetShaderiv(shaderID, GL_COMPILE_STATUS, status)
+		if status == GL_FALSE:
+			# Note that getting the error log is much simpler in Python than in C/C++
+			# and does not require explicit handling of the string buffer
+			strInfoLog = glGetShaderInfoLog(shaderID)
+			strShaderType = ""
+			if shaderType is GL_VERTEX_SHADER:
+				strShaderType = "vertex"
+			elif shaderType is GL_GEOMETRY_SHADER:
+				strShaderType = "geometry"
+			elif shaderType is GL_FRAGMENT_SHADER:
+				strShaderType = "fragment"
+
+			print(b"Compilation failure for " + strShaderType + b" shader:\n" + strInfoLog)
+
+		return shaderID
+
+
+	def createProgram(self,shaderList):
+		programID = glCreateProgram()
+
+		for shader in shaderList:
+			glAttachShader(programID, shader)
+
+		glLinkProgram(programID)
+
+		status = glGetProgramiv(programID, GL_LINK_STATUS)
+		if status == GL_FALSE:
+			strInfoLog = glGetProgramInfoLog(programID)
+			print(b"Linker failure: \n" + strInfoLog)
+
+		# important for cleanup
+		for shaderID in shaderList:
+			glDetachShader(programID, shaderID)
+
+		return programID
 
 
 	def mousePressed(self, button, state, x, y):
@@ -266,79 +299,3 @@ class Grid(_Shape):
 	def draw(self):
 		_Shape.draw(self)
 
-		# paint on top
-		glDisable(GL_DEPTH_TEST)
-		# no lighting
-		#glDisable(GL_LIGHTING)
-
-		# draw the main axises wider and in a different color
-		glLineWidth(self.axisWidth)
-
-		# draw x axis
-		glBegin(GL_LINES)
-		glColor3f(self.xAxisColor.r, self.xAxisColor.g, self.xAxisColor.b)
-		glVertex3f(-self.xSize, 0, 0)
-		glVertex3f(self.xSize, 0, 0)
-		glEnd()
-
-		# draw z axis
-		glBegin(GL_LINES)
-		glColor3f(self.zAxisColor.r, self.zAxisColor.g, self.zAxisColor.b)
-		glVertex3f(0, 0, -self.zSize)
-		glVertex3f(0, 0, self.zSize)
-		glEnd()
-
-		# draw origin
-		glPointSize(self.originRadius)
-
-		glBegin(GL_POINTS)
-		glColor3f(self.originColor.r, self.originColor.g, self.originColor.b)
-		glVertex3f(0, 0, 0)
-		glEnd()
-
-		# enaable depth based merge
-		glEnable(GL_DEPTH_TEST)
-		# enable lighting
-		#glEnable(GL_LIGHTING)
-def createShader(shaderType, shaderCode):
-	shaderID = glCreateShader(shaderType)
-	glShaderSource(shaderID, shaderCode)
-	glCompileShader(shaderID)
-
-	status = None
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, status)
-	if status == GL_FALSE:
-		# Note that getting the error log is much simpler in Python than in C/C++
-		# and does not require explicit handling of the string buffer
-		strInfoLog = glGetShaderInfoLog(shaderID)
-		strShaderType = ""
-		if shaderType is GL_VERTEX_SHADER:
-			strShaderType = "vertex"
-		elif shaderType is GL_GEOMETRY_SHADER:
-			strShaderType = "geometry"
-		elif shaderType is GL_FRAGMENT_SHADER:
-			strShaderType = "fragment"
-
-		print(b"Compilation failure for " + strShaderType + b" shader:\n" + strInfoLog)
-
-	return shaderID
-
-
-def createProgram(shaderList):
-	programID = glCreateProgram()
-
-	for shader in shaderList:
-		glAttachShader(programID, shader)
-
-	glLinkProgram(programID)
-
-	status = glGetProgramiv(programID, GL_LINK_STATUS)
-	if status == GL_FALSE:
-		strInfoLog = glGetProgramInfoLog(programID)
-		print(b"Linker failure: \n" + strInfoLog)
-
-	# important for cleanup
-	for shaderID in shaderList:
-		glDetachShader(programID, shaderID)
-
-	return programID
