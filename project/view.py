@@ -1,3 +1,8 @@
+# CENG 487 Assignment5 by
+# Arif Burak Demiray
+# StudentId: 250201022
+# December 2021
+
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *

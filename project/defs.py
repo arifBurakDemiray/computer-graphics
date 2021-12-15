@@ -1,3 +1,8 @@
+# CENG 487 Assignment5 by
+# Arif Burak Demiray
+# StudentId: 250201022
+# December 2021
+
 ESCAPE = '\033'
 
 class DrawStyle:

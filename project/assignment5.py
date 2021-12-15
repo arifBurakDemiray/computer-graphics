@@ -1,3 +1,8 @@
+# CENG 487 Assignment5 by
+# Arif Burak Demiray
+# StudentId: 250201022
+# December 2021
+
 import sys
 
 from OpenGL.GL import *
@@ -49,7 +54,7 @@ def main():
 	glutInitWindowSize(640, 480)
 	glutInitWindowPosition(200, 200)
 
-	window = glutCreateWindow("CENG487 Assigment Template")
+	window = glutCreateWindow("CENG487 Assigment 5")
 
 	# define callbacks
 	glutDisplayFunc( view.draw )
