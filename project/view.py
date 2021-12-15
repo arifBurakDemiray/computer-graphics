@@ -280,6 +280,19 @@ class Grid(_Shape):
 		self.zSize = zSize
 
 
+	def prepareVBD(self):
+		finalVertexPositions = []
+		finalVertexColors = []
+
+		# go over faces and assemble an array for all vertex data
+
+		for face in self.faces:
+			for vertex in face:
+				finalVertexPositions.extend(self.vertices[vertex].asList())
+				finalVertexColors.extend(self.wireColor.asList())
+
+		self.VBOData = numpy.array(finalVertexPositions + finalVertexColors, dtype='float32')
+
 	def setXAxisColor(self, r, g, b, a):
 		self.xAxisColor = ColorRGBA(r, g, b, a)
 
@@ -297,5 +310,25 @@ class Grid(_Shape):
 
 
 	def draw(self):
-		_Shape.draw(self)
+		self.prepareVBD()
+		self.initBuffers()
 
+		glBindBuffer(GL_ARRAY_BUFFER, self.VBO)
+		elementSize = numpy.dtype(numpy.float32).itemsize
+		offset = 0
+
+		
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
+		glEnableVertexAttribArray(0)
+
+		
+		offset +=  elementSize * 4 * len(self.vertices)
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
+		glEnableVertexAttribArray(1)
+
+		glDrawArrays(GL_LINES, 0, len(self.vertices)*4)
+		
+		glDisableVertexAttribArray(0)
+		glDisableVertexAttribArray(1)
+		
+		glBindBuffer(GL_ARRAY_BUFFER, 0)
