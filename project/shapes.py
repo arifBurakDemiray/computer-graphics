@@ -122,8 +122,12 @@ class _Shape:
             type_of_draw = GL_QUADS
         if self.drawStyle == DrawStyle.WIRE or (not self.wireOnShaded):
             type_of_draw = GL_LINES
+        #glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
         glDrawArrays(type_of_draw, 0, len(self.vertices) * 4)
+
+        # if type_of_draw == GL_POLYGON:
+        #     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
         glDisableVertexAttribArray(0)
         glDisableVertexAttribArray(1)
