@@ -47,7 +47,7 @@ class _Shape:
             GL_ARRAY_BUFFER,
             elementSize * len(self.VBOData),
             self.VBOData,
-            GL_STATIC_DRAW
+            GL_STREAM_DRAW
         )
 
         # reset array buffer
