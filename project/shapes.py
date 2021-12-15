@@ -76,11 +76,20 @@ class _Shape:
 
 		# go over faces and assemble an array for all vertex data
 
+		faceId = 0
+
+		lastAccessed = ColorRGBA(0,0,0,1)
+
 		for face in self.faces:
 			for vertex in face:
 				finalVertexPositions.extend(self.vertices[vertex].asList())
-				finalVertexColors.extend(ColorRGBA.pick_random_color().asList())
+				try:
+					lastAccessed = self.colors[faceId]
+				except IndexError:
+					continue
+				finalVertexColors.extend(lastAccessed.asList())
 
+			faceId += 1
 
 		self.VBOData = numpy.array(finalVertexPositions + finalVertexColors, dtype='float32')
 
@@ -103,7 +112,7 @@ class _Shape:
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
 		glEnableVertexAttribArray(1)
 
-		glDrawArrays(GL_POLYGON, 0, len(self.vertices))
+		glDrawArrays(GL_QUADS, 0, len(self.vertices)*4)
 		
 		glDisableVertexAttribArray(0)
 		glDisableVertexAttribArray(1)
