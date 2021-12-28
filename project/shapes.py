@@ -35,6 +35,9 @@ class UV:
         self.u = u
         self.v = v
 
+    def asList(self) -> 'list[float]':
+        return [self.u, self.v]
+
 
 class _Shape:
     def __init__(self, name, vertices: 'list[HCoord]', normals: 'list[HCoord]', uvs: 'list[UV]', faces: 'list[list[FaceProp]]'):
@@ -91,6 +94,7 @@ class _Shape:
     def prepareVBD(self):
         finalVertexPositions = []
         finalVertexColors = []
+        finalUVs = []
 
         # go over faces and assemble an array for all vertex data
 
@@ -105,7 +109,7 @@ class _Shape:
                 else:
                     lastAccessed = [1.0, 0.6, 0.0, 1.0]
 
-            if self.drawStyle == DrawStyle.WIRE or (not self.wireOnShaded):
+            elif self.drawStyle == DrawStyle.WIRE or (not self.wireOnShaded):
                 if not self.wireOnShaded:
                     if not self.fixedDrawStyle:
                         lastAccessed = self.wireColor.asList()
@@ -117,10 +121,11 @@ class _Shape:
             for face_prop in face:
                 finalVertexPositions.extend(face_prop.vertex.asList())
                 finalVertexColors.extend(lastAccessed)
+                finalUVs.extend(face_prop.uv.asList())
 
             faceId += 1
 
-        self.VBOData = numpy.array(finalVertexPositions + finalVertexColors, dtype='float32')
+        self.VBOData = numpy.array(finalVertexPositions + finalVertexColors + finalUVs, dtype='float32')
 
     def draw(self):
 
@@ -134,16 +139,21 @@ class _Shape:
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
         glEnableVertexAttribArray(0)
 
-        offset += elementSize * 4 * len(self.vertices)
+        offset += elementSize * 4 * 4 * len(self.faces)
         glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, elementSize * 4, ctypes.c_void_p(offset))
         glEnableVertexAttribArray(1)
 
+        offset += elementSize * 4 * 4 * len(self.faces)
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, elementSize * 2, ctypes.c_void_p(offset))
+        glEnableVertexAttribArray(2)
+
         type_of_draw = GL_QUADS
 
-        glDrawArrays(type_of_draw, 0, len(self.vertices) * 4)
+        glDrawArrays(type_of_draw, 0, len(self.faces) * 4)
 
         glDisableVertexAttribArray(0)
         glDisableVertexAttribArray(1)
+        glDisableVertexAttribArray(2)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
 

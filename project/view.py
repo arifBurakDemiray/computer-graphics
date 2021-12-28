@@ -6,6 +6,8 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+
+from project.texture import initTextures
 from .shader import Shader
 
 from .vector import *
@@ -40,6 +42,7 @@ class View:
         self.mouseY = -1
         self.programID = -1
         self.shader = Shader()
+        self.textureId = -1
 
     def initProgram(self):
         shaderList = []
@@ -51,6 +54,8 @@ class View:
 
         for shader in shaderList:
             glDeleteShader(shader)
+
+        self.textureId = initTextures("texture/white_wolf.png", self.programID)
 
     def draw(self):
 

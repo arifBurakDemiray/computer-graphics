@@ -66,6 +66,6 @@ class ObjParser(Parser):
         shape.drawStyle = DrawStyle.SMOOTH
 
         for i in range(0, len(faces) + 1):
-            shape.colors.append(ColorRGBA.pick_random_color())
+            shape.colors.append(ColorRGBA(1, 1, 1, 1))
 
         return shape
