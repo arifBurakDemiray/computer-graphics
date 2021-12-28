@@ -46,7 +46,7 @@ class _Shape:
         self.colors = []
         self.obj2World = Matrix()
         self.drawStyle = DrawStyle.NODRAW
-        self.wireOnShaded = False
+        self.wireOnShaded = True
         self.wireWidth = 2
         self.name = name
         self.fixedDrawStyle = False
@@ -114,8 +114,8 @@ class _Shape:
                 else:
                     lastAccessed = self.wireColor.asList()
 
-            for vertex in face:
-                finalVertexPositions.extend(self.vertices[vertex].asList())
+            for face_prop in face:
+                finalVertexPositions.extend(face_prop.vertex.asList())
                 finalVertexColors.extend(lastAccessed)
 
             faceId += 1
@@ -140,17 +140,7 @@ class _Shape:
 
         type_of_draw = GL_QUADS
 
-        if self.drawStyle == DrawStyle.FACETED or self.drawStyle == DrawStyle.SMOOTH:
-            type_of_draw = GL_QUADS
-        if self.drawStyle == DrawStyle.WIRE or (not self.wireOnShaded):
-            type_of_draw = GL_LINES
-
-        # glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-
         glDrawArrays(type_of_draw, 0, len(self.vertices) * 4)
-
-        # if type_of_draw == GL_POLYGON:
-        #     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
         glDisableVertexAttribArray(0)
         glDisableVertexAttribArray(1)
