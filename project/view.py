@@ -43,6 +43,7 @@ class View:
         self.programID = -1
         self.shader = Shader()
         self.percent = 0
+        self.textures = [0, 1]
 
     def initProgram(self):
         shaderList = []
@@ -55,7 +56,7 @@ class View:
         for shader in shaderList:
             glDeleteShader(shader)
 
-        initTextures(self.programID)
+        initTextures(self.programID, self.textures)
 
     def draw(self):
 
@@ -65,7 +66,7 @@ class View:
         glUseProgram(self.programID)
 
         percentLocation = glGetUniformLocation(self.programID, "percent")
-        glUniform1f(percentLocation, self.percent)
+        glUniform1i(percentLocation, self.percent)
 
         viewLocation = glGetUniformLocation(self.programID, "view")
         glUniformMatrix4fv(viewLocation, 1, GL_FALSE, self.camera.getViewMatrix())
@@ -109,8 +110,8 @@ class View:
         if ord(key) == 27:
             # Escape key = 27
             glutLeaveMainLoop()
+            glDeleteTextures(2, self.textures)
             return
-
         if key == b'f':
             self.camera.reset()
             self.draw()
@@ -135,6 +136,16 @@ class View:
                     node.wireOnShaded = True
                     self.draw()
 
+        if key == b'+':
+            self.percent += 5
+            if(self.percent >= 100):
+                self.percent = 100
+            self.draw()
+        if key == b'-':
+            self.percent -= 5
+            if(self.percent <= 0):
+                self.percent = 0
+            self.draw()
     # The function called when our window is resized (which shouldn't happen if you enable fullscreen, below)
 
     def resizeView(self, width, height):

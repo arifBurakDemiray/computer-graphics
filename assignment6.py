@@ -102,7 +102,7 @@ def main():
 
 
 # Print message to console, and kick off the main to get it rolling.
-print("Hit ESC key to quit.\nHit 6 :)")
+print("Hit ESC key to quit.")
 
 if __name__ == '__main__':
     main()
