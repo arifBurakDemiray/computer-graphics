@@ -5,10 +5,10 @@ from OpenGL.GL import *
 import numpy
 
 
-def initTextures(texFilename, programID):
+def initTextures(programID):
     glUseProgram(programID)
 
-    tex1ID = loadTexture(texFilename)
+    tex1ID = loadTexture("texture/white_wolf.png")
 
     # set shader stuff
     tex1Location = glGetUniformLocation(programID, "tex1")
@@ -18,10 +18,18 @@ def initTextures(texFilename, programID):
     glActiveTexture(GL_TEXTURE0 + tex1ID)
     glBindTexture(GL_TEXTURE_2D, tex1ID)
 
+    tex2ID = loadTexture("texture/lady_of_the_time.png")
+
+    # set shader stuff
+    tex2Location = glGetUniformLocation(programID, "tex2")
+    glUniform1i(tex2Location, tex2ID)
+
+    # now activate texture units
+    glActiveTexture(GL_TEXTURE0 + tex2ID)
+    glBindTexture(GL_TEXTURE_2D, tex2ID)
+
     # reset program
     glUseProgram(0)
-
-    return tex1ID
 
 
 def loadTexture(texFilename):

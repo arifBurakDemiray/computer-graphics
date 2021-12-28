@@ -42,7 +42,7 @@ class View:
         self.mouseY = -1
         self.programID = -1
         self.shader = Shader()
-        self.textureId = -1
+        self.percent = 0
 
     def initProgram(self):
         shaderList = []
@@ -55,7 +55,7 @@ class View:
         for shader in shaderList:
             glDeleteShader(shader)
 
-        self.textureId = initTextures("texture/white_wolf.png", self.programID)
+        initTextures(self.programID)
 
     def draw(self):
 
@@ -63,6 +63,9 @@ class View:
         glClear(GL_COLOR_BUFFER_BIT)
 
         glUseProgram(self.programID)
+
+        percentLocation = glGetUniformLocation(self.programID, "percent")
+        glUniform1f(percentLocation, self.percent)
 
         viewLocation = glGetUniformLocation(self.programID, "view")
         glUniformMatrix4fv(viewLocation, 1, GL_FALSE, self.camera.getViewMatrix())
