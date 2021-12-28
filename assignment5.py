@@ -9,12 +9,12 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
-from vector import *
-from matrix import *
-from shapes import *
-from camera import *
-from scene import *
-from view import *
+from project.vector import *
+from project.matrix import *
+from project.shapes import *
+from project.camera import *
+from project.scene import *
+from project.view import *
 
 # create grid
 grid = Grid("grid", 10, 10)

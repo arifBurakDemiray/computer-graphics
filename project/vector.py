@@ -125,7 +125,7 @@ class ColorRGBA(HCoord):
         self.a = self.w
 
     def asList(self):
-        return [self.x, self.y, self.z, 1.0]
+        return [self.x, self.y, self.z, self.w]
 
     @staticmethod
     def pick_random_color() -> 'ColorRGBA':

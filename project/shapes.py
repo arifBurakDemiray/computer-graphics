@@ -8,10 +8,10 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
-from vector import *
-from matrix import *
-from boundingbox import *
-from defs import DrawStyle
+from .vector import *
+from .matrix import *
+from .boundingbox import *
+from .defs import DrawStyle
 
 __all__ = ['_Shape', 'Cube', 'DrawStyle']
 
@@ -122,7 +122,8 @@ class _Shape:
             type_of_draw = GL_QUADS
         if self.drawStyle == DrawStyle.WIRE or (not self.wireOnShaded):
             type_of_draw = GL_LINES
-        #glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+
+        # glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
         glDrawArrays(type_of_draw, 0, len(self.vertices) * 4)
 

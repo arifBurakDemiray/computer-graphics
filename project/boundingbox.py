@@ -2,8 +2,8 @@
 # Arif Burak Demiray
 # StudentId: 250201022
 # December 2021
-from vector import *
-from matrix import *
+from .vector import *
+from .matrix import *
 
 
 class BoundingBox:

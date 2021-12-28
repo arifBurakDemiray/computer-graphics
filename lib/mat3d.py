@@ -50,7 +50,7 @@ class Mat3d:
 
         for i in range(4):
             for y in range(4):
-                value.append(self.content[y*4 + i])
+                value.append(self.content[y * 4 + i])
 
         return Mat3d(value)
 
@@ -63,18 +63,19 @@ class Mat3d:
         Inverse of the caller mat3d object
         """
         dimensional = []
-        for i in range(int(len(self.content)/4)):
+        for i in range(int(len(self.content) / 4)):
             dimensional.append([
-                self.content[i*4],
-                self.content[i*4 + 1],
-                self.content[i*4 + 2],
-                self.content[i*4 + 3]])
+                self.content[i * 4],
+                self.content[i * 4 + 1],
+                self.content[i * 4 + 2],
+                self.content[i * 4 + 3]])
         inversed = np.linalg.inv(dimensional)
         return Mat3d(inversed.flatten())
 
     def calc_multiplacation(self, matrix: 'Mat3d') -> 'Mat3d':
         """
-        Calculates multiplacation of two matrices that have 4 columns second matrix should be 4x4 
+        Calculates multiplacation of two matrices that have 
+        4 columns second matrix should be 4x4 
         it start multiplacation with caller mat3d
 
         Parameters:
@@ -88,11 +89,11 @@ class Mat3d:
         """
         value = []
 
-        for z in range(int(len(self.content)/4)):
+        for z in range(int(len(self.content) / 4)):
             for i in range(4):
                 total = 0
                 for y in range(4):
-                    total += self.content[z*4+y]*matrix.content[y*4 + i]
+                    total += self.content[z * 4 + y] * matrix.content[y * 4 + i]
                 value.append(total)
 
         return Mat3d(value)

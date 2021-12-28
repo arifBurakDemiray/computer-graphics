@@ -4,7 +4,7 @@
 # December 2021
 
 from math import sin, cos
-from vector import *
+from .vector import *
 import numpy
 
 

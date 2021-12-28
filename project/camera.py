@@ -10,10 +10,10 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
-from vector import *
-from matrix import *
-from shapes import *
-from defs import *
+from .vector import *
+from .matrix import *
+from .shapes import *
+from .defs import *
 
 
 class Camera:

@@ -6,13 +6,13 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-from shader import Shader
+from .shader import Shader
 
-from vector import *
-from matrix import *
-from shapes import *
-from scene import *
-from defs import *
+from .vector import *
+from .matrix import *
+from .shapes import *
+from .scene import *
+from .defs import *
 
 
 class Event:
