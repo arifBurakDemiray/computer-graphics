@@ -262,7 +262,7 @@ class Grid(_Shape):
             id2 = (indexZ + 1) * (xSize + 1) + indexX
             faces.append([id1, id1 + 1, id2 + 1, id2])
 
-        _Shape.__init__(self, name, vertices, faces)
+        _Shape.__init__(self, name, vertices, faces, [], [])
 
         self.fixedDrawStyle = True
 

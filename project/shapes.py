@@ -13,12 +13,34 @@ from .matrix import *
 from .boundingbox import *
 from .defs import DrawStyle
 
-__all__ = ['_Shape', 'Cube', 'DrawStyle']
+__all__ = ['_Shape', 'Cube', 'DrawStyle', 'FaceProp', 'UV']
+
+
+class FaceProp:
+    vertex: 'HCoord'
+    normal: 'HCoord'
+    uv: 'UV'
+
+    def __init__(self, vertex, normal, uv) -> None:
+        self.vertex = vertex
+        self.normal = normal
+        self.uv = uv
+
+
+class UV:
+    u: float
+    v: float
+
+    def __init__(self, u: float, v: float) -> None:
+        self.u = u
+        self.v = v
 
 
 class _Shape:
-    def __init__(self, name, vertices, faces):
+    def __init__(self, name, vertices: 'list[HCoord]', normals: 'list[HCoord]', uvs: 'list[UV]', faces: 'list[list[FaceProp]]'):
         self.vertices = vertices
+        self.normals = normals
+        self.uvs = uvs
         self.edges = []
         self.faces = faces
         self.colors = []
