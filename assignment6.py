@@ -60,7 +60,7 @@ def main():
     global view
 
     if(len(sys.argv) < 2):
-        print("usage\n\tpython3 assigment3.py filename\n\tpython assigment3.py filename")
+        print("usage\n\tpython3 assigment3.py filename\n\tpython assigment6.py filename")
         return
 
     splitted = sys.argv[1].split("/")[-1].split(".")[1]
@@ -85,7 +85,7 @@ def main():
     glutInitWindowSize(640, 480)
     glutInitWindowPosition(200, 200)
 
-    glutCreateWindow("CENG487 Assigment 5")
+    glutCreateWindow("CENG487 Assigment 6")
 
     # define callbacks
     glutDisplayFunc(view.draw)
