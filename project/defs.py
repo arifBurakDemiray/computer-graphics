@@ -1,6 +1,5 @@
 # CENG 487 Assignment6 by
 # Arif Burak Demiray
-# StudentId: 250201022
 # December 2021
 
 ESCAPE = '\033'

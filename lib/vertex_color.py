@@ -1,10 +1,10 @@
 # CENG 487 Assignment4 by
 # Arif Burak Demiray
-# StudentId: 250201022
 # December 2021
 
 from numpy.random import random_sample
 from .vec3d import Vec3d
+
 
 class RGBA:
     """
@@ -22,7 +22,7 @@ class RGBA:
         self.a = a
 
     def pick_random_color() -> 'RGBA':
-        return RGBA(random_sample(),random_sample(),random_sample())
+        return RGBA(random_sample(), random_sample(), random_sample())
 
 
 class VertexLink:
@@ -32,16 +32,15 @@ class VertexLink:
     links: 'list[int]'
     colors: 'list[RGBA]'
     level: int
-    face_point : 'Vec3d'
+    face_point: 'Vec3d'
 
-    def __init__(self, links: 'list[int]', colors: 'list[RGBA]', 
-    level : int = 0, vec : 'Vec3d' = Vec3d(0,0,0,0)) -> None:
+    def __init__(self, links: 'list[int]', colors: 'list[RGBA]',
+                 level: int = 0, vec: 'Vec3d' = Vec3d(0, 0, 0, 0)) -> None:
         self.links = links
         self.colors = colors
         self.level = level
         self.face_point = vec
 
-    
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             is4 = len(self.links) == 4 and len(other.links) == 4

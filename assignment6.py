@@ -1,8 +1,8 @@
 # CENG 487 Assignment6 by
 # Arif Burak Demiray
-# StudentId: 250201022
 # December 2021
 
+import os
 import sys
 
 from OpenGL.GL import *
@@ -39,21 +39,7 @@ view.setScene(scene)
 
 
 def check_file(filename: str) -> bool:
-    splitted = filename.split("/")
-    if(len(splitted) > 1):
-        current = os.getcwd()
-
-        pureFile = splitted[-1]
-
-        splitted.remove(splitted[-1])
-        os.chdir("/".join(splitted))
-
-        result = pureFile in os.listdir()
-        os.chdir(current)
-        return result
-
-    else:
-        return filename in os.listdir()
+    return os.path.isfile(filename)
 
 
 def main():
@@ -63,7 +49,7 @@ def main():
         print("usage\n\tpython3 assigment3.py filename\n\tpython assigment6.py filename")
         return
 
-    splitted = sys.argv[1].split("/")[-1].split(".")[1]
+    splitted = sys.argv[1].split(".")[-1]
 
     if(splitted not in ["obj", "OBJ"]):
         print("\n\tplease provide an obj format file\n")

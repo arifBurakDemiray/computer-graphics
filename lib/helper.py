@@ -1,9 +1,9 @@
 # CENG 487 Assignment4 by
 # Arif Burak Demiray
-# StudentId: 250201022
 # December 2021
 
 from numpy import pi
+
 
 def degree_to_radian(degree: float) -> float:
     """
@@ -19,6 +19,7 @@ def degree_to_radian(degree: float) -> float:
     """
     return degree*pi/180
 
+
 def radian_to_degree(radian: float) -> float:
     """
     This function converts a radian to its degree equivalent
@@ -32,5 +33,3 @@ def radian_to_degree(radian: float) -> float:
     degree
     """
     return radian*180/pi
-
-

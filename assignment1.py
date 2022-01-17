@@ -1,6 +1,5 @@
 # CENG 487 Assignment1 by
 # Arif Burak Demiray
-# StudentId: 250201022
 # October 2021
 
 from lib.factory import create_cube, create_triangle
@@ -63,7 +62,7 @@ def DrawTriangle(triangle: Polygon) -> None:
     for rope in triangle.vertex_links:
         for i in range(len(rope.links)):  # draw by their links
             rgb = rope.colors[i]
-            glColor3f(rgb.r, rgb.b, rgb.g) #draw color for each vertex
+            glColor3f(rgb.r, rgb.b, rgb.g)  # draw color for each vertex
             glVertex3f(vertices[rope.links[i]].x,
                        vertices[rope.links[i]].y, vertices[rope.links[i]].z)
 
@@ -77,7 +76,7 @@ def DrawCube(cube: Polygon) -> None:
 
     for rope in cube.vertex_links:
         rgb = rope.colors[0]
-        glColor3f(rgb.r, rgb.b, rgb.g) #draw color for each face
+        glColor3f(rgb.r, rgb.b, rgb.g)  # draw color for each face
         for i in range(len(rope.links)):
             glVertex3f(vertices[rope.links[i]].x,
                        vertices[rope.links[i]].y, vertices[rope.links[i]].z)
@@ -87,7 +86,7 @@ def DrawCube(cube: Polygon) -> None:
 def DrawGLScene() -> None:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    #draw models
+    # draw models
     DrawTriangle(triangle)
     DrawCube(cube)
 
@@ -95,11 +94,11 @@ def DrawGLScene() -> None:
 
 
 def RotateOverTime() -> None:
-    if(not isStopped): #if user not stopped automatic rotation
-        time.sleep(0.04) #wait a little
-        translate_models() #translate to origin
-        rotate_models() #rotate
-        untranslate_models() #translate back
+    if(not isStopped):  # if user not stopped automatic rotation
+        time.sleep(0.04)  # wait a little
+        translate_models()  # translate to origin
+        rotate_models()  # rotate
+        untranslate_models()  # translate back
 
     DrawGLScene()
 
@@ -168,7 +167,7 @@ def untranslate_models() -> None:
 
 
 def main() -> None:
-    translate_models() #Firstly put models to their locations
+    translate_models()  # Firstly put models to their locations
 
     global window
     glutInit(sys.argv)

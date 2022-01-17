@@ -1,6 +1,5 @@
 # CENG 487 Assignment4 by
 # Arif Burak Demiray
-# StudentId: 250201022
 # December 2021
 
 from .vec3d import Vec3d

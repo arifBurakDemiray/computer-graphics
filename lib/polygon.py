@@ -1,6 +1,5 @@
 # CENG 487 Assignment4 by
 # Arif Burak Demiray
-# StudentId: 250201022
 # December 2021
 
 from lib.view import Camera
@@ -23,7 +22,7 @@ class Polygon:
     edge_adjaceny: 'list[Edge]' = []
     face_adjaceny: 'list[Edge]' = []
     vertex_adjaceny: 'list[Edge]' = []
-    #tried to do winged edge structure
+    # tried to do winged edge structure
 
     def __init__(self, vertices: 'list[Vec3d]', vertex_links: 'list[VertexLink]', level: int = 0) -> None:
         if(vertices != None):
@@ -32,10 +31,10 @@ class Polygon:
         self.vertex_links = vertex_links
         self.level = level
 
-    def get(self,index : int = 0) -> 'list[float]':
+    def get(self, index: int = 0) -> 'list[float]':
         multiplied = index*4
         return [self.vertices.content[multiplied], self.vertices.content[multiplied+1],
-        self.vertices.content[multiplied+2], self.vertices.content[multiplied+3]]
+                self.vertices.content[multiplied+2], self.vertices.content[multiplied+3]]
 
     def transformate(self, matrix: Mat3d) -> None:
         """
@@ -48,15 +47,15 @@ class Polygon:
         self.matrix_stack.append(matrix)
         self.vertices = self.vertices.calc_multiplacation(matrix)
 
-    def with_edges(self,edges : 'list[Edge]') -> 'Polygon':
+    def with_edges(self, edges: 'list[Edge]') -> 'Polygon':
         self.edge_adjaceny = edges
         return self
-    
-    def with_vertices(self,vertices : 'list[Edge]') -> 'Polygon':
+
+    def with_vertices(self, vertices: 'list[Edge]') -> 'Polygon':
         self.vertex_adjaceny = vertices
         return self
 
-    def with_faces(self,faces : 'list[Edge]') -> 'Polygon':
+    def with_faces(self, faces: 'list[Edge]') -> 'Polygon':
         self.face_adjaceny = faces
         return self
 
@@ -72,9 +71,9 @@ class Polygon:
         result = self.vertices.calc_translation(vector)
 
         self.vertices = result.transformed
-        #self.matrix_stack.append(result.transformer)
+        # self.matrix_stack.append(result.transformer)
 
-    def set_vertices(self,vertices: Mat3d) -> 'Polygon':
+    def set_vertices(self, vertices: Mat3d) -> 'Polygon':
         self.vertices = vertices
         return self
 
@@ -126,8 +125,7 @@ class Polygon:
         """
         result = self.vertices.calc_scale(constant)
         self.vertices = result.transformed
-        #self.matrix_stack.append(result.transformer)
-        
+        # self.matrix_stack.append(result.transformer)
 
     def project(self, camera: Camera) -> None:
         """
@@ -144,16 +142,15 @@ class Polygon:
     def change_colors(self) -> 'Polygon':
         for link in self.vertex_links:
             for i in range(len(link.colors)):
-                link.colors[i]=RGBA.pick_random_color()
-        
+                link.colors[i] = RGBA.pick_random_color()
+
         return self
 
-    def create_hard_copy(self,level: int, links: 'list[VertexLink]' = None) -> 'Polygon':
-        
+    def create_hard_copy(self, level: int, links: 'list[VertexLink]' = None) -> 'Polygon':
+
         link_vertex = links if links != None else self.vertex_links
 
-        return Polygon(None,link_vertex,level).set_vertices(self.vertices)
-        
+        return Polygon(None, link_vertex, level).set_vertices(self.vertices)
 
     def rotate(self, degree: float) -> None:
         """
@@ -252,14 +249,15 @@ class Polygon:
 
         return result
 
-class Edge:
-    vertices : 'list[int]'
-    faces : 'list[VertexLink]'
-    edges : 'list[Edge]'
-    edge_point : 'Vec3d' = Vec3d(0,0,0,1)
-    level : int = 0 
 
-    def __init__(self,vertices : 'list[int]',faces : 'list[VertexLink]',edges : 'list[Edge]', level: int = 0) -> None:
+class Edge:
+    vertices: 'list[int]'
+    faces: 'list[VertexLink]'
+    edges: 'list[Edge]'
+    edge_point: 'Vec3d' = Vec3d(0, 0, 0, 1)
+    level: int = 0
+
+    def __init__(self, vertices: 'list[int]', faces: 'list[VertexLink]', edges: 'list[Edge]', level: int = 0) -> None:
         self.vertices = vertices
         self.faces = faces
         self.edges = edges
@@ -267,12 +265,11 @@ class Edge:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return (self.vertices[0]==other.vertices[0] and 
-            self.vertices[1]==other.vertices[1]) or (self.vertices[1]==other.vertices[0] and 
-            self.vertices[0]==other.vertices[1])
+            return (self.vertices[0] == other.vertices[0] and
+                    self.vertices[1] == other.vertices[1]) or (self.vertices[1] == other.vertices[0] and
+                                                               self.vertices[0] == other.vertices[1])
         else:
             return False
-    
+
     def is_neighbour(self, edge: 'Edge') -> bool:
         return self.vertices[0] in edge.vertices or self.vertices[1] in edge.vertices and self.level == edge.level
-

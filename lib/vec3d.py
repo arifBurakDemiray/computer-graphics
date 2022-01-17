@@ -1,6 +1,5 @@
 # CENG 487 Assignment4 by
 # Arif Burak Demiray
-# StudentId: 250201022
 # December 2021
 
 import numpy as np
@@ -37,7 +36,7 @@ class Vec3d:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.x == other.x and self.y == other.y and self.z == other.z and self.w == other.w 
+            return self.x == other.x and self.y == other.y and self.z == other.z and self.w == other.w
         else:
             return False
 
@@ -110,7 +109,7 @@ class Vec3d:
 
         New vec3d object vector is added to the caller object
         """
-        return Vec3d(self.x+vector.x, self.y+vector.y,self.z+vector.z, self.__check_homo_index(vector))
+        return Vec3d(self.x+vector.x, self.y+vector.y, self.z+vector.z, self.__check_homo_index(vector))
 
     def multiply(self, constant: float) -> 'Vec3d':
         """
