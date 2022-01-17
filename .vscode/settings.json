@@ -1,0 +1,21 @@
+{
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true,
+    "editor.detectIndentation": false,
+    "python.formatting.provider": "autopep8",
+    "python.formatting.autopep8Args": [
+        "--max-line-length=240"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=240",
+        "--ignore=F403,F405,F821,W291",
+    ],
+    "editor.rulers": [
+        120
+    ],
+    "shellcheck.customArgs": [
+        "-x"
+    ],
+}
